@@ -31,37 +31,38 @@ Interfaces:
 "Report Command script" syntax:
 
 <script name="ProjectPlace">													(IScript : IExecutable)
-	<variables>																	(IExecutorEnvironmentInit)
-		<provider name="TimeReportExtractor">									(IProvider)
-			<type>Reportz.Plugin.ProjectPlace.TimeReportExtractor</type>
-			<ctor>
-				<arguments>														(Add/Remove Collection)
-				</arguments>
-			</ctor>
-			<properties>														(Add/Remove Collection)
-				<add key="username" type="string">{username}</add>
-				<add key="password" type="string">{password}</add>
-				<add key="url" type="string"></add>
-			</properties>
-		</provider>
-		<formatter name="JsonToCsvFormatter">									(IFormatter)
-			<type>Reportz.Plugin.ProjectPlace.TimeReportJsonToCsvFormatter</type>
-			<ctor>
-				<arguments>														(Add/Remove Collection)
-				</arguments>
-			</ctor>
-			<properties>														(Add/Remove Collection)
-				<add key="username" type="string">{username}</add>					(AddVariable : IVariable)
-				<add key="password" type="string">{password}</add>					(AddVariable : IVariable)
-				<add key="url" type="string"></add>									(AddVariable : IVariable)
-			</properties>
-		</formatter>
-	</variables>
 
 	<execute>																	(IExecutorEnvironment)
+		<variable key="TimeReportExtractor">									(Variable : IVariable)
+			<instantiate>														(IInstantiatableVariable)
+				<type>Reportz.Plugin.ProjectPlace.TimeReportExtractor</type>		(IProvider)
+				<ctor>
+					<arguments>														(Add/Remove Collection)
+					</arguments>
+				</ctor>
+				<properties>														(Add/Remove Collection)
+					<add key="username" type="string">{username}</add>
+					<add key="password" type="string">{password}</add>
+					<add key="url" type="string"></add>
+				</properties>
+			</instantiate>
+		</variable>
+		
+		<variable key="JsonToCsvFormatter">										(Variable : IVariable)
+			<instantiate>														(IInstantiatableVariable)
+				<type>Reportz.Plugin.ProjectPlace.TimeReportJsonToCsvFormatter</type>	(IFormatter)
+				<ctor>
+					<arguments>														(Add/Remove Collection)
+					</arguments>
+				</ctor>
+				<properties>														(Add/Remove Collection)
+				</properties>
+			</formatter>
+		</variable>
+
 		<variable key="startDate" type="DateTime">2017-01-01</variable>			(IExecutor)
 
-		<run-executable name="TimeReportExtractor">								(IExecutor)
+		<run-executable key="TimeReportExtractor">								(IExecutor)
 			<arguments>															(Add/Remove Collection)
 				<add key="startDate" var="$startDate" />							(AddVariable : IVariable)
 				<add key="endDate" type="DateTime">2017-01-15</add>					(AddVariable : IVariable)
@@ -76,7 +77,7 @@ Interfaces:
 			</events>
 		</run-executable>
 
-		<run-executable name="JsonToCsvFormatter">								(IExecutor)
+		<run-executable key="JsonToCsvFormatter">								(IExecutor)
 			<arguments>															(Add/Remove Collection)
 				<add key="json" var="$json" />										(AddVariable : IVariable)
 			</arguments>
