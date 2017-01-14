@@ -22,6 +22,11 @@ namespace Reportz.Scripting.Classes
     {
         private Type _explicitType;
 
+        public Variable()
+        {
+            
+        }
+
         public string Key { get; set; }
         public object Value { get; set; }
         public Type Type => _explicitType ?? Value?.GetType();
@@ -47,6 +52,17 @@ namespace Reportz.Scripting.Classes
             if (element.Attribute("value") == null && !element.HasElements)
             {
                 Value = element.Value;
+            }
+
+            var typeName = ScriptParser.MatchTypeAlias(element.Attribute("type")?.Value);
+            if (!string.IsNullOrWhiteSpace(typeName))
+            {
+                _explicitType = Type.GetType(typeName, false, true);
+                if (_explicitType != null)
+                {
+                    var typeConverter = new Lux.Serialization.Xml.XmlSettings().Converter;
+                    Value = typeConverter.Convert(Value, _explicitType);
+                }
             }
         }
     }

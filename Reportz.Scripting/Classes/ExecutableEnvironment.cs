@@ -12,15 +12,16 @@ namespace Reportz.Scripting.Classes
     public class ExecutableEnvironment : IExecutableEnvironment, IXConfigurable
     {
 #if DEBUG
-        public readonly IList<IExecutable> _list = new List<IExecutable>();
+        public readonly IList<object> _elements = new List<object>();
 #else
-        private readonly IList<IExecutable> _list = new List<IExecutable>();
+        private readonly IList<object> _elements = new List<object>();
 #endif
 
         public IExecutableResult Execute(IExecutableArgs args)
         {
             IExecutableResult result = null;
-            foreach (var executable in _list)
+            var executables = _elements.OfType<IExecutable>().ToList();
+            foreach (var executable in executables)
             {
                 var a = new ExecutableArgs
                 {
@@ -29,7 +30,7 @@ namespace Reportz.Scripting.Classes
                     Arguments = null,
                 };
                 var r = executable.Execute(a);
-                if (_list.Count == 1)
+                if (executables.Count == 1)
                     result = r;
             }
             return result;
@@ -41,8 +42,7 @@ namespace Reportz.Scripting.Classes
             foreach (var child in children)
             {
                 var obj = instantiator.InstantiateElement(child);
-                var executable = obj as IExecutable;
-                _list.Add(executable);
+                _elements.Add(obj);
             }
         }
     }

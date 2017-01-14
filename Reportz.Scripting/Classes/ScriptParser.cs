@@ -63,19 +63,14 @@ namespace Reportz.Scripting.Classes
                 List<object> arguments = null;
                 List<Tuple<string, object>> properties = null;
                 Type type = null;
-                if (!string.IsNullOrEmpty(elementType))
-                {
-                    type = Type.GetType(elementType);
-                    if (type == null)
-                        throw new Exception($"Type '{elementType}' not found");
-                }
-                else if (element.Elements().Count() == 1 && element.Element("instantiate") != null)
+                if (element.Elements().Count() == 1 && element.Element("instantiate") != null)
                 {
                     var instantiateElem = element.Element("instantiate");
                     elementType = instantiateElem?.Element("type")?.Value;
                     if (string.IsNullOrEmpty(elementType))
                         throw new Exception($"<Type> element is required in <Instantiate>.");
-                    type = Type.GetType(elementType);
+                    elementType = MatchTypeAlias(elementType);
+                    type = Type.GetType(elementType, false, true);
                     if (type == null)
                         throw new Exception($"Type '{elementType}' not found");
 
@@ -108,12 +103,17 @@ namespace Reportz.Scripting.Classes
                         }
                     }
                 }
-                else if (element.Attribute("type") == null)
+                else if (_knownTypes.TryGetValue(elementName, out type))
                 {
-                    // The type to instanciate has not been explicitly specified
-                    var f = _knownTypes.TryGetValue(elementName, out type);
                     if (type == null)
                         throw new Exception($"Type for element '{elementName}' not found");
+                }
+                else if (!string.IsNullOrEmpty(elementType))
+                {
+                    elementType = MatchTypeAlias(elementType);
+                    type = Type.GetType(elementType, false, true);
+                    if (type == null)
+                        throw new Exception($"Type '{elementType}' not found");
                 }
                 else
                 {
@@ -123,25 +123,27 @@ namespace Reportz.Scripting.Classes
 
                 object value;
                 var elementValue = element.Attribute("value")?.Value;
-                if (elementValue == null && !string.IsNullOrEmpty(element.Value))
+                if (elementValue == null && !string.IsNullOrEmpty(element.Value) && !element.HasElements)
                     elementValue = element.Value;
-                if (!string.IsNullOrEmpty(elementValue) && !element.HasElements)
+                if (!string.IsNullOrEmpty(elementValue))
+                    value = elementValue;
+
+                if (type == typeof (string))
                 {
                     value = elementValue;
                 }
-
-                if (type != null)
+                else if (type != null)
                 {
-                    if (typeof(IXConfigurable).IsAssignableFrom(type))
+                    if (typeof (IXConfigurable).IsAssignableFrom(type))
                     {
                         var instance = _xmlSettings.TypeInstantiator.Instantiate(type, arguments?.ToArray());
                         var configurable = (IXConfigurable) instance;
                         configurable.Configure(this, element);
                         value = configurable;
                     }
-                    else if (!type.IsPrimitive && type != typeof(string))
+                    else if (!type.IsPrimitive && type != typeof (string) && !type.IsValueType)
                     {
-                        var temp = Activator.CreateInstance(type);
+                        var temp = _xmlSettings.TypeInstantiator.Instantiate(type, arguments?.ToArray());
                         value = temp;
                     }
                     else
@@ -156,16 +158,29 @@ namespace Reportz.Scripting.Classes
                         {
                             var propInfo = type.GetProperty(property.Item1);
                             if (propInfo != null)
-                                propInfo.SetValue(value, property.Item2);
+                            {
+                                var val = property.Item2;
+                                try
+                                {
+                                    val = _xmlSettings.Converter.Convert(val, propInfo.PropertyType);
+                                    propInfo.SetValue(value, val);
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw;
+                                }
+                            }
                             else
                             {
-                                
+
                             }
                         }
                     }
                 }
                 else
+                {
                     value = elementValue;
+                }
                 return value;
             }
             catch (Exception ex)
@@ -173,6 +188,22 @@ namespace Reportz.Scripting.Classes
                 //_log.Error($"Error when instantiating obj", ex);
                 throw;
             }
+        }
+
+        public static string MatchTypeAlias(string typeName)
+        {
+            if (string.IsNullOrWhiteSpace(typeName))
+                return null;
+            var type = Type.GetType(typeName, false, true);
+            if (type != null)
+                typeName = type.AssemblyQualifiedName;
+            else
+            {
+                type = Type.GetType("System." + typeName, false, true);
+                if (type != null)
+                    typeName = type.AssemblyQualifiedName;
+            }
+            return typeName;
         }
     }
 }

@@ -3,22 +3,22 @@
 	<execute>
 		<variable key="TimeReportExtractor">
 			<instantiate>
-				<type>Reportz.Plugin.ProjectPlace.TimeReportExtractor</type>
+				<type>Reportz.Plugin.ProjectPlace.TimeReportExtractor, Reportz.Plugin.ProjectPlace</type>
 				<ctor>
 					<arguments>
 					</arguments>
 				</ctor>
 				<properties>
-					<add key="username" type="string">{username}</add>
-					<add key="password" type="string">{password}</add>
-					<add key="url" type="string"></add>
+					<add key="Username" type="string">Bill Gates</add>
+					<add key="Password" type="string">Apple Sux!</add>
+					<add key="Url" type="string"></add>
 				</properties>
 			</instantiate>
 		</variable>
 		
 		<variable key="JsonToCsvFormatter">
 			<instantiate>
-				<type>Reportz.Plugin.ProjectPlace.TimeReportJsonToCsvFormatter</type>
+				<type>Reportz.Plugin.ProjectPlace.TimeReportJsonToCsvFormatter, Reportz.Plugin.ProjectPlace</type>
 				<ctor>
 					<arguments>
 					</arguments>

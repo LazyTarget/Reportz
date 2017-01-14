@@ -18,6 +18,11 @@ namespace Reportz.Scripting.Classes
         private readonly IDictionary<string, IEvent> _events;
 #endif
 
+        public EventCollection()
+        {
+            _events = new SortedDictionary<string, IEvent>();
+        }
+
         public IEnumerator<IEvent> GetEnumerator()
         {
             return _events.Values.GetEnumerator();
@@ -36,7 +41,8 @@ namespace Reportz.Scripting.Classes
             foreach (var child in children)
             {
                 var childName = child.Name.LocalName.ToLower();
-                if (childName == "add" ||
+                if (childName == "event" ||
+                    childName == "add" ||
                     childName == "item")
                 {
                     var e = new Event();
