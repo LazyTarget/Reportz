@@ -61,6 +61,7 @@ namespace Reportz.Scripting.Classes
                 var elementType = element.Attribute("type")?.Value;
 
                 List<object> arguments = null;
+                List<Tuple<string, object>> properties = null;
                 Type type = null;
                 if (!string.IsNullOrEmpty(elementType))
                 {
@@ -68,22 +69,51 @@ namespace Reportz.Scripting.Classes
                     if (type == null)
                         throw new Exception($"Type '{elementType}' not found");
                 }
-                else if (element.Attribute("type") != null)
+                else if (element.Elements().Count() == 1 && element.Element("instantiate") != null)
+                {
+                    var instantiateElem = element.Element("instantiate");
+                    elementType = instantiateElem?.Element("type")?.Value;
+                    if (string.IsNullOrEmpty(elementType))
+                        throw new Exception($"<Type> element is required in <Instantiate>.");
+                    type = Type.GetType(elementType);
+                    if (type == null)
+                        throw new Exception($"Type '{elementType}' not found");
+
+                    var ctorElem = instantiateElem.Element("ctor");
+                    if (ctorElem != null)
+                    {
+                        var argsChildren = ctorElem.Element("arguments")?.Elements();
+                        if (argsChildren != null)
+                        {
+                            arguments = new List<object>();
+                            foreach (var child in argsChildren)
+                            {
+                                var arg = InstantiateElement(child);
+                                arguments.Add(arg);
+                            }
+                        }
+                    }
+
+                    var propsElem = instantiateElem.Element("properties");
+                    if (propsElem != null)
+                    {
+                        properties = new List<Tuple<string, object>>();
+                        var propChildren = propsElem.Elements();
+                        foreach (var child in propChildren)
+                        {
+                            var propVal = InstantiateElement(child);
+                            var key = child.Attribute("key")?.Value;
+                            var prop = new Tuple<string, object>(key, propVal);
+                            properties.Add(prop);
+                        }
+                    }
+                }
+                else if (element.Attribute("type") == null)
                 {
                     // The type to instanciate has not been explicitly specified
                     var f = _knownTypes.TryGetValue(elementName, out type);
                     if (type == null)
                         throw new Exception($"Type for element '{elementName}' not found");
-                }
-                else if (elementName == "instantiate")
-                {
-                    arguments = new List<object>();
-                    var children = element.Elements();
-                    foreach (var child in children)
-                    {
-                        var arg = InstantiateElement(child);
-                        arguments.Add(arg);
-                    }
                 }
                 else
                 {
@@ -95,7 +125,7 @@ namespace Reportz.Scripting.Classes
                 var elementValue = element.Attribute("value")?.Value;
                 if (elementValue == null && !string.IsNullOrEmpty(element.Value))
                     elementValue = element.Value;
-                if (!string.IsNullOrEmpty(elementValue))
+                if (!string.IsNullOrEmpty(elementValue) && !element.HasElements)
                 {
                     value = elementValue;
                 }
@@ -117,6 +147,21 @@ namespace Reportz.Scripting.Classes
                     else
                     {
                         value = _xmlSettings.Converter.Convert(elementValue, type);
+                    }
+
+
+                    if (properties != null)
+                    {
+                        foreach (var property in properties)
+                        {
+                            var propInfo = type.GetProperty(property.Item1);
+                            if (propInfo != null)
+                                propInfo.SetValue(value, property.Item2);
+                            else
+                            {
+                                
+                            }
+                        }
                     }
                 }
                 else

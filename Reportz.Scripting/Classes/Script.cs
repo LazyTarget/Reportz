@@ -22,6 +22,7 @@ namespace Reportz.Scripting.Classes
         {
             if (_execute == null)
                 throw new InvalidOperationException("Execute logic hasn't been loaded");
+            args = args ?? new ExecutableArgs { Scope = new VariableScope() };
             var result = _execute?.Execute(args);
             return result;
         }
