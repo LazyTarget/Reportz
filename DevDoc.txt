@@ -2,11 +2,11 @@
 Program that can help import/export/manage various reports. For example time reports for work or milage journals.
 
 File ext:
-	.repcs (Report Command Script)
+	.repml (Report Command Script)
 
 
 Console application usage:
-	Reportz.exe Run -script 'TimeReport.repcs' -scriptname ProjectPlace
+	Reportz.exe Run -script 'TimeReport.repml' -scriptname ProjectPlace
 
 
 
@@ -28,7 +28,7 @@ Interfaces:
 
 
 
-"Report Command script" syntax:
+"Report Command script / markup language" syntax:
 
 <script name="ProjectPlace">													(IScript : IExecutable)
 
@@ -57,7 +57,7 @@ Interfaces:
 				</ctor>
 				<properties>														(Add/Remove Collection)
 				</properties>
-			</formatter>
+			</instantiate>
 		</variable>
 
 		<variable key="startDate" type="DateTime">2017-01-01</variable>			(IExecutor)
@@ -100,4 +100,4 @@ Interfaces:
 			
 		</event>
 	</events>
-<script>
+</script>

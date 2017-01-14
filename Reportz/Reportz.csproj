@@ -47,11 +47,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="TextScript.repml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Reportz.Core\Reportz.Core.csproj">
       <Project>{d6260d79-07fa-4179-989f-7b01007ad218}</Project>
       <Name>Reportz.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Reportz.Scripting\Reportz.Scripting.csproj">
+      <Project>{60727ea6-1fc4-440f-97f7-2500f5dafbfe}</Project>
+      <Name>Reportz.Scripting</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

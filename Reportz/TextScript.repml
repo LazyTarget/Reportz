@@ -1,0 +1,71 @@
+﻿<script name="ProjectPlace">
+
+	<execute>
+		<variable key="TimeReportExtractor">
+			<instantiate>
+				<type>Reportz.Plugin.ProjectPlace.TimeReportExtractor</type>
+				<ctor>
+					<arguments>
+					</arguments>
+				</ctor>
+				<properties>
+					<add key="username" type="string">{username}</add>
+					<add key="password" type="string">{password}</add>
+					<add key="url" type="string"></add>
+				</properties>
+			</instantiate>
+		</variable>
+		
+		<variable key="JsonToCsvFormatter">
+			<instantiate>
+				<type>Reportz.Plugin.ProjectPlace.TimeReportJsonToCsvFormatter</type>
+				<ctor>
+					<arguments>
+					</arguments>
+				</ctor>
+				<properties>
+				</properties>
+			</instantiate>
+		</variable>
+
+		<variable key="startDate" type="DateTime">2017-01-01</variable>
+
+		<run-executable key="TimeReportExtractor">
+			<arguments>
+				<add key="startDate" var="$startDate" />
+				<add key="endDate" type="DateTime">2017-01-15</add>
+			</arguments>
+			<events>
+				<event key="error">
+					<alert>Something went wrong!! Error message: $$Exception.Message</alert>
+				</event>
+				<event key="completed">
+					<variable key="json">$$Result</variable>
+				</event>
+			</events>
+		</run-executable>
+
+		<run-executable key="JsonToCsvFormatter">
+			<arguments>
+				<add key="json" var="$json" />
+			</arguments>
+			<events>
+				<event key="error">
+					<alert>Something went wrong!! Error message: $$Exception.Message</alert>
+				</event>
+				<event key="completed">
+					<variable key="csv">$$Result</variable>
+				</event>
+			</events>
+		</run-executable>
+	</execute>
+
+	<events>
+		<event key="error">
+			<alert>Something went wrong when running script!! Error message: $$Exception.Message</alert>
+		</event>
+		<event key="completed">
+			
+		</event>
+	</events>
+</script>

@@ -5,9 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Reportz.Scripting.Interfaces;
 
-namespace Reportz.Scripting.Commands
+namespace Reportz.Scripting.Classes
 {
-    public class RunExecutableCommand : IExecutable, IHasEvents
+    public class ExecutableResult : IExecutableResult
     {
+        public object Result { get; set; }
     }
 }
