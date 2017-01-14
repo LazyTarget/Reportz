@@ -7,6 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reportz", "Reportz\Reportz.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reportz.Core", "Reportz.Core\Reportz.Core.csproj", "{D6260D79-07FA-4179-989F-7B01007AD218}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{100F9813-D77F-465C-BA32-8EAC04093CC2}"
+	ProjectSection(SolutionItems) = preProject
+		DevDoc.txt = DevDoc.txt
+		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
