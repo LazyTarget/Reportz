@@ -40,6 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\VariableScope.cs" />
+    <Compile Include="Interfaces\IEvent.cs" />
+    <Compile Include="Interfaces\IExecutable.cs" />
+    <Compile Include="Interfaces\IExecutableArgs.cs" />
+    <Compile Include="Interfaces\IExecutableEnvironment.cs" />
+    <Compile Include="Interfaces\IExecutableResult.cs" />
+    <Compile Include="Interfaces\IExecutor.cs" />
+    <Compile Include="Interfaces\IVariable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
