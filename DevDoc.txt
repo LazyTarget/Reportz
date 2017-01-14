@@ -12,39 +12,91 @@ Console application usage:
 
 Interfaces:
 	IExecutable.cs
-		Execute()
+		ExeResult Execute(ExeArgs args)
 
 	IExecutor.cs
-		Execute()
+		ExeResult Execute(ExeArgs args)
 
-	IProvider.cs
-		Execute()
+	IProvider.cs : IExecutable
+
+	IFormatter.cs : IExecutable
+		
+	IVariable.cs
+		string Key
+		Object Value
+		Type Type
 
 
 
 "Report Command script" syntax:
 
-<script name="ProjectPlace">
-	<variables>
-		<provider name="TimeReportExtractor">									(IExecutable)
-			<type>Reportz.Plugin.ProjectPlace.TimeReportExtractor</type>		(IProvider)
-			<properties>
+<script name="ProjectPlace">													(IScript : IExecutable)
+	<variables>																	(IExecutorEnvironmentInit)
+		<provider name="TimeReportExtractor">									(IProvider)
+			<type>Reportz.Plugin.ProjectPlace.TimeReportExtractor</type>
+			<ctor>
+				<arguments>														(Add/Remove Collection)
+				</arguments>
+			</ctor>
+			<properties>														(Add/Remove Collection)
 				<add key="username" type="string">{username}</add>
 				<add key="password" type="string">{password}</add>
 				<add key="url" type="string"></add>
 			</properties>
-			<arguments>
-				
-			</arguments>
 		</provider>
+		<formatter name="JsonToCsvFormatter">									(IFormatter)
+			<type>Reportz.Plugin.ProjectPlace.TimeReportJsonToCsvFormatter</type>
+			<ctor>
+				<arguments>														(Add/Remove Collection)
+				</arguments>
+			</ctor>
+			<properties>														(Add/Remove Collection)
+				<add key="username" type="string">{username}</add>					(AddVariable : IVariable)
+				<add key="password" type="string">{password}</add>					(AddVariable : IVariable)
+				<add key="url" type="string"></add>									(AddVariable : IVariable)
+			</properties>
+		</formatter>
 	</variables>
 
-	<execute>
-		<run-provider name="TimeReportExtractor">								(IExecutor)
-			<arguments>
-				<add key="startDate" type="DateTime">2017-01-01</add>
-				<add key="endDate" type="DateTime">2017-01-15</add>
+	<execute>																	(IExecutorEnvironment)
+		<variable key="startDate" type="DateTime">2017-01-01</variable>			(IExecutor)
+
+		<run-executable name="TimeReportExtractor">								(IExecutor)
+			<arguments>															(Add/Remove Collection)
+				<add key="startDate" var="$startDate" />							(AddVariable : IVariable)
+				<add key="endDate" type="DateTime">2017-01-15</add>					(AddVariable : IVariable)
 			</arguments>
-		</run-provider>
+			<events>															(Collection<IEvent>)
+				<event key="error">												(IEvent, IExecutorEnvironment)
+					<alert>Something went wrong!! Error message: $$Exception.Message</alert>
+				</event>
+				<event key="completed">											(IEvent, IExecutorEnvironment)
+					<variable key="json">$$Result</variable>					(Variable : IVariable)
+				</event>
+			</events>
+		</run-executable>
+
+		<run-executable name="JsonToCsvFormatter">								(IExecutor)
+			<arguments>															(Add/Remove Collection)
+				<add key="json" var="$json" />										(AddVariable : IVariable)
+			</arguments>
+			<events>															(Collection<IEvent>)
+				<event key="error">												(IEvent, IExecutorEnvironment)
+					<alert>Something went wrong!! Error message: $$Exception.Message</alert>
+				</event>
+				<event key="completed">											(IEvent, IExecutorEnvironment)
+					<variable key="csv">$$Result</variable>						(Variable : IVariable)
+				</event>
+			</events>
+		</run-executable>
 	</execute>
+
+	<events>															(Collection<IEvent>)
+		<event key="error">												(IEvent, IExecutorEnvironment)
+			<alert>Something went wrong when running script!! Error message: $$Exception.Message</alert>
+		</event>
+		<event key="completed">											(IEvent, IExecutorEnvironment)
+			
+		</event>
+	</events>
 <script>
