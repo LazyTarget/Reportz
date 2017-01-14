@@ -1,2 +1,50 @@
 
 Program that can help import/export/manage various reports. For example time reports for work or milage journals.
+
+File ext:
+	.repcs (Report Command Script)
+
+
+Console application usage:
+	Reportz.exe Run -script 'TimeReport.repcs' -scriptname ProjectPlace
+
+
+
+Interfaces:
+	IExecutable.cs
+		Execute()
+
+	IExecutor.cs
+		Execute()
+
+	IProvider.cs
+		Execute()
+
+
+
+"Report Command script" syntax:
+
+<script name="ProjectPlace">
+	<variables>
+		<provider name="TimeReportExtractor">									(IExecutable)
+			<type>Reportz.Plugin.ProjectPlace.TimeReportExtractor</type>		(IProvider)
+			<properties>
+				<add key="username" type="string">{username}</add>
+				<add key="password" type="string">{password}</add>
+				<add key="url" type="string"></add>
+			</properties>
+			<arguments>
+				
+			</arguments>
+		</provider>
+	</variables>
+
+	<execute>
+		<run-provider name="TimeReportExtractor">								(IExecutor)
+			<arguments>
+				<add key="startDate" type="DateTime">2017-01-01</add>
+				<add key="endDate" type="DateTime">2017-01-15</add>
+			</arguments>
+		</run-provider>
+	</execute>
+<script>
