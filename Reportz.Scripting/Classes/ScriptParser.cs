@@ -29,6 +29,7 @@ namespace Reportz.Scripting.Classes
             _knownTypes["script"] = typeof (Script);
             _knownTypes["variable"] = typeof(Variable);
             _knownTypes["event"] = typeof(Event);
+            _knownTypes["alert"] = typeof(AlertCommand);
             _knownTypes["run-executable"] = typeof(RunExecutableCommand);
         }
 
@@ -191,6 +192,46 @@ namespace Reportz.Scripting.Classes
                 throw;
             }
         }
+
+
+        public object EvaluateExpression(VariableScope scope, string expression)
+        {
+            if (string.IsNullOrWhiteSpace(expression))
+                return expression;
+            if (expression.IndexOf('$') < 0)
+                return expression;
+
+            var words = expression.Split(' ').ToArray();
+            for (var i = 0; i < words.Length; i++)
+            {
+                var word = words[i];
+                if (word.ElementAtOrDefault(0) == '$')
+                {
+                    if (word.ElementAtOrDefault(1) == '$')
+                    {
+
+                    }
+                    
+                    var key = word;
+                    
+                    // todo: parse sub properties/-methods/-indexors
+
+                    IVariable variable = scope?.GetVariable(key);
+                    while (variable == null && key.StartsWith("$"))
+                    {
+                        key = key.Substring(1);
+                        variable = scope?.GetVariable(key);
+                    }
+                    
+                    var val = variable?.Value;
+                    word = val?.ToString();
+                    words[i] = word;
+                }
+            }
+            var result = string.Join(" ", words);
+            return result;
+        }
+
 
         public static string MatchTypeAlias(string typeName)
         {

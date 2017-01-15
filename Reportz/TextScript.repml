@@ -40,7 +40,7 @@
 					<alert>Something went wrong!! Error message: $$Exception.Message</alert>
 				</event>
 				<event key="complete">
-					<variable key="json">$$Result</variable>
+					<variable key="json" depth="root">$$Result</variable>
 				</event>
 			</events>
 		</run-executable>
@@ -55,12 +55,14 @@
 					<alert>Something went wrong!! Error message: $$Exception.Message</alert>
 				</event>
 				<event key="complete">
-					<variable key="csv">$$Result</variable>
+					<!--<variable key="csv" depth="root">$$Result</variable>-->
+          <variable key="csv" var="$$Result" depth="root" />
 				</event>
 			</events>
 		</run-executable>
-
-    <variable key="$$Result" var="csv"></variable>
+    
+    <alert>Csv result: $csv</alert>
+    
 	</execute>
 
 	<events>

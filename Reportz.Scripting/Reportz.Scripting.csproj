@@ -58,6 +58,7 @@
     <Compile Include="Classes\ScriptParser.cs" />
     <Compile Include="Classes\Variable.cs" />
     <Compile Include="Classes\VariableScope.cs" />
+    <Compile Include="Commands\AlertCommand.cs" />
     <Compile Include="Commands\RunExecutableCommand.cs" />
     <Compile Include="Interfaces\IEvent.cs" />
     <Compile Include="Interfaces\IExecutable.cs" />

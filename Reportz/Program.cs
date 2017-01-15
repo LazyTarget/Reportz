@@ -24,9 +24,17 @@ namespace Reportz
             var scriptFactory = new ScriptParser();
             var script = scriptFactory.Parse(text);
 
+            Console.WriteLine("Executing script...");
+            Console.WriteLine();
+
             IExecutableArgs arg = null;
             var result = script.Execute(arg);
-            Console.WriteLine("Script result: " + result?.Result);
+
+            Console.WriteLine();
+            Console.WriteLine("::ExecutableResult:: ");
+            Console.WriteLine(result?.Result);
+
+            Console.ReadLine();
         }
     }
 }

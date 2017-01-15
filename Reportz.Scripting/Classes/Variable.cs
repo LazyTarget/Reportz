@@ -60,33 +60,24 @@ namespace Reportz.Scripting.Classes
             
             if (Value is string)
             {
-                // todo: refactor to expression evaluator...
-
-                var words = Value.ToString().Split(' ').ToArray();
-                for (var i = 0; i < words.Length; i++)
-                {
-                    var word = words[i];
-                    if (word.ElementAtOrDefault(0) == '$')
-                    {
-                        if (word.ElementAtOrDefault(1) == '$')
-                        {
-                                
-                        }
-
-                        //var key = word.TrimStart('$');
-                        var key = word;
-                        // todo: parse sub properties/-methods/-indexors
-
-                        var variable = args.Scope?.GetVariable(key);
-                        var val = variable?.Value;
-                        word = val?.ToString();
-                        words[i] = word;
-                    }
-                }
-                Value = string.Join(" ", words);
+                var val = _instantiator.EvaluateExpression(args.Scope, Value.ToString());
+                Value = val;
             }
 
-            args.Scope?.Parent?.SetVariable(this);
+
+            int depth;
+            var rootRaw = _element?.Attribute("depth")?.Value;
+            int.TryParse(rootRaw, out depth);
+
+            if (rootRaw == "root")
+            {
+                args.Scope?.Root?.SetVariable(this);
+            }
+            else
+            {
+                // implement numeric navigation??
+                args.Scope?.Parent?.SetVariable(this);
+            }
 
             var success = args.Scope?.Parent?.GetVariable(Key) != null &&
                           args.Scope?.Parent?.GetVariable(Key).Value == Value;
