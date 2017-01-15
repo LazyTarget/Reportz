@@ -58,13 +58,31 @@ namespace Reportz.Scripting.Classes
                 else if (childName == "add" ||
                          childName == "item" ||
                          childName == "var" ||
-                         childName == "variable")
+                         childName == "variable" ||
+                         childName == "list")
                 {
                     if (childName == "add")
                         childElem.Name = "variable";
+
+                    var key = childElem.Attribute("key")?.Value;
                     var obj = instantiator.InstantiateElement(childElem);
-                    var e = (IVariable) obj;
-                    _vars[e.Key] = e;
+
+                    var variable = obj as IVariable;
+                    key = variable?.Key ?? key ?? _vars.Count.ToString();
+
+                    if (variable == null)
+                    {
+                        variable = new Variable
+                        {
+                            Key = key,
+                            Value = obj,
+                        };
+                    }
+                    else
+                    {
+                        // todo: must update variable.Key?
+                    }
+                    _vars[key] = variable;
                 }
                 else if (childName == "remove")
                 {

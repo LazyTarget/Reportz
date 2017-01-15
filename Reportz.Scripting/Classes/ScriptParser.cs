@@ -31,6 +31,10 @@ namespace Reportz.Scripting.Classes
             _knownTypes["event"] = typeof(Event);
             _knownTypes["alert"] = typeof(AlertCommand);
             _knownTypes["run-executable"] = typeof(RunExecutableCommand);
+
+            _knownTypes["events"] = typeof(EventCollection);
+            _knownTypes["arguments"] = typeof(ArgCollection);
+            _knownTypes["list"] = typeof(ArgCollection);
         }
 
 

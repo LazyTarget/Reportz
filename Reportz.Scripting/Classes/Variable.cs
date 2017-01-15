@@ -22,6 +22,7 @@ namespace Reportz.Scripting.Classes
     {
         private IXInstantiator _instantiator;
         private Type _explicitType;
+        private bool? _instantiated;
         private XElement _element;
 
         public Variable()
@@ -32,7 +33,8 @@ namespace Reportz.Scripting.Classes
         public string Key { get; set; }
         public object Value { get; set; }
         public Type Type => _explicitType ?? Value?.GetType();
-        public bool Instantiated { get; private set; }
+        public bool Instantiated => _instantiated ?? _element?.Element("instantiate") == null;
+
         
         public IExecutableResult Execute(IExecutableArgs args)
         {
@@ -44,7 +46,7 @@ namespace Reportz.Scripting.Classes
                 {
                     var value = _instantiator.InstantiateElement(instantiateElem);
                     Value = value;
-                    Instantiated = true;
+                    _instantiated = true;
                 }
                 else
                 {
@@ -92,8 +94,7 @@ namespace Reportz.Scripting.Classes
         {
             _element = element;
             _instantiator = instantiator;
-
-            Instantiated = element.Element("instantiate") == null;
+            
             Key = element.Attribute("key")?.Value;
             Value = element.Attribute("value")?.Value;
 
@@ -119,11 +120,11 @@ namespace Reportz.Scripting.Classes
             var result = new Variable();
             result.Key = Key;
             result.Value = Value;
-            result.Instantiated = Instantiated;
 
             result._explicitType = _explicitType;
             result._element = _element;
             result._instantiator = _instantiator;
+            result._instantiated = _instantiated;
             return result;
         }
     }

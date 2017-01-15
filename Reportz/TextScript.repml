@@ -51,7 +51,13 @@
 		<run-executable key="JsonToCsvFormatter">
 			<arguments>
 				<add key="json" var="json" />
-        <variable key="json2" var="json" />
+        <add key="seperator">;</add>
+        <list key="header">
+          <add>artifactTitle</add>
+          <add>reportedDate</add>
+          <add>minutes</add>
+          <add>meta.planletTitle</add>
+        </list>
 			</arguments>
 			<events>
 				<event key="error">

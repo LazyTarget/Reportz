@@ -39,7 +39,7 @@ namespace Reportz.Plugin.ProjectPlace
 
 
                 var authenticate = AuthenticateUser(client);
-                if (!authenticate)
+                if (!authenticate || handler.CookieContainer.Count <= 0)
                 {
                     throw new Exception("Error authenticating user to ProjectPlace.");
                 }
@@ -67,6 +67,7 @@ namespace Reportz.Plugin.ProjectPlace
                 throw;
             }
         }
+
 
         protected virtual bool AuthenticateUser(HttpClient client)
         {
@@ -97,6 +98,7 @@ namespace Reportz.Plugin.ProjectPlace
             }
         }
         
+
         protected virtual JArray GetTimeReports(HttpClient client, DateTime startDate, DateTime endDate)
         {
             try
@@ -121,7 +123,7 @@ namespace Reportz.Plugin.ProjectPlace
                 contentTask.Wait();
                 var content = contentTask.Result;
 
-                var settings = JsonConvert.DefaultSettings();
+                var settings = JsonConvert.DefaultSettings?.Invoke() ?? new JsonSerializerSettings();
                 var result = JsonConvert.DeserializeObject<JArray>(content, settings);
 
                 return result;
