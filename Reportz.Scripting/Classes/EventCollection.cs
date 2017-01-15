@@ -20,7 +20,7 @@ namespace Reportz.Scripting.Classes
 
         public EventCollection()
         {
-            _events = new SortedDictionary<string, IEvent>();
+            _events = new Dictionary<string, IEvent>();
         }
 
         public IEnumerator<IEvent> GetEnumerator()

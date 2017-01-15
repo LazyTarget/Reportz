@@ -32,7 +32,7 @@
 
 		<run-executable key="TimeReportExtractor">
 			<arguments>
-				<add key="startDate" var="$startDate" />
+				<add key="startDate" var="startDate" />
 				<add key="endDate" type="DateTime">2017-01-15</add>
 			</arguments>
 			<events>
@@ -47,7 +47,8 @@
 
 		<run-executable key="JsonToCsvFormatter">
 			<arguments>
-				<add key="json" var="$json" />
+				<add key="json" var="json" />
+        <variable key="json2" var="json" />
 			</arguments>
 			<events>
 				<event key="error">

@@ -17,11 +17,9 @@ namespace Reportz.Plugin.ProjectPlace
 
         public IExecutableResult Execute(IExecutableArgs args)
         {
-            var temp = args?.Arguments?.FirstOrDefault();
-            var jsonVar = temp as IVariable;
-            var t = jsonVar?.Key == "json";
+            var jsonVar = args?.Arguments?.FirstOrDefault(x => x.Key == "json");
 
-            var success = t && !string.IsNullOrWhiteSpace(jsonVar?.Value?.ToString());
+            var success = !string.IsNullOrWhiteSpace(jsonVar?.Value?.ToString());
 
             var result = new ExecutableResult
             {

@@ -10,6 +10,6 @@ namespace Reportz.Scripting.Classes
     public class ExecutableArgs : IExecutableArgs
     {
         public VariableScope Scope { get; set; }
-        public object[] Arguments { get; set; }
+        public IVariable[] Arguments { get; set; }
     }
 }

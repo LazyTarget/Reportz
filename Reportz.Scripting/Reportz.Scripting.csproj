@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\ArgCollection.cs" />
     <Compile Include="Classes\Event.cs" />
     <Compile Include="Classes\EventCollection.cs" />
     <Compile Include="Classes\ExecutableArgs.cs" />

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Reportz.Scripting.Commands;
 using Reportz.Scripting.Interfaces;
 using Reportz.Scripting.Xml;
 
@@ -28,6 +29,7 @@ namespace Reportz.Scripting.Classes
             _knownTypes["script"] = typeof (Script);
             _knownTypes["variable"] = typeof(Variable);
             _knownTypes["event"] = typeof(Event);
+            _knownTypes["run-executable"] = typeof(RunExecutableCommand);
         }
 
 
@@ -63,9 +65,9 @@ namespace Reportz.Scripting.Classes
                 List<object> arguments = null;
                 List<Tuple<string, object>> properties = null;
                 Type type = null;
-                if (element.Elements().Count() == 1 && element.Element("instantiate") != null)
+                if (elementName == "instantiate")
                 {
-                    var instantiateElem = element.Element("instantiate");
+                    var instantiateElem = element;
                     elementType = instantiateElem?.Element("type")?.Value;
                     if (string.IsNullOrEmpty(elementType))
                         throw new Exception($"<Type> element is required in <Instantiate>.");

@@ -44,10 +44,14 @@ namespace Reportz.Scripting.Classes
 
         public IVariable GetVariable(string key)
         {
+            var localOnly = key.StartsWith("$$");
+            if (localOnly)
+                key = key.Substring("$$".Length);
+
             IVariable result;
             if (!_data.TryGetValue(key, out result))
             {
-                if (Parent != null)
+                if (Parent != null && !localOnly)
                 {
                     result = Parent.GetVariable(key);
                 }
@@ -61,6 +65,7 @@ namespace Reportz.Scripting.Classes
             if (v != null)
             {
                 v.Value = variable.Value;
+                // todo: create deep copy in current scope?
             }
             else
             {

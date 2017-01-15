@@ -10,6 +10,6 @@ namespace Reportz.Scripting.Interfaces
     public interface IExecutableArgs
     {
         VariableScope Scope { get; }
-        object[] Arguments { get; }
+        IVariable[] Arguments { get; }
     }
 }
