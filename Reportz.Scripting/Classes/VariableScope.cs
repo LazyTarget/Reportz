@@ -45,8 +45,8 @@ namespace Reportz.Scripting.Classes
         public IVariable GetVariable(string key)
         {
             var localOnly = key.StartsWith("$$");
-            if (localOnly)
-                key = key.Substring("$$".Length);
+            //if (localOnly)
+            //    key = key.Substring("$$".Length);
 
             IVariable result;
             if (!_data.TryGetValue(key, out result))

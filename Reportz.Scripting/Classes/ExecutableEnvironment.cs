@@ -30,9 +30,23 @@ namespace Reportz.Scripting.Classes
                     Arguments = null,
                 };
                 var r = executable.Execute(a);
+
                 if (executables.Count == 1)
+                {
                     result = r;
+                }
             }
+
+
+            var resultVar = args.Scope.GetVariable("$$Result");
+            if (resultVar != null)
+            {
+                result = new ExecutableResult
+                {
+                    Result = resultVar.Value,
+                };
+            }
+
             return result;
         }
 

@@ -31,42 +31,76 @@ namespace Reportz.Scripting.Commands
 
         public IExecutableResult Execute(IExecutableArgs args)
         {
+            IExecutableResult result = null;
             args = args ?? new ExecutableArgs { Scope = new VariableScope() };
-
-            var variable = args?.Scope?.GetVariable(Key);
-            if (variable?.Value == null)
+            try
             {
-                throw new InvalidOperationException("Invalid variable value.");
-            }
-            var executable = variable.Value as IExecutable;
-            if (executable == null)
-            {
-                throw new InvalidOperationException("Variable is not an executable.");
-            }
-
-            var a = new ExecutableArgs
-            {
-                //Arguments = Arguments?.Values?.Select(x => x.Value).ToArray(),
-                Arguments = new IVariable[0],
-                Scope = args?.Scope?.CreateChild(),
-            };
-            
-            var vars = _argsCollection;
-            if (vars != null)
-            {
-                foreach (var var in vars)
+                var variable = args.Scope?.GetVariable(Key);
+                if (variable?.Value == null)
                 {
-                    var exeArgs = new ExecutableArgs();
-                    exeArgs.Scope = a.Scope;
-                    exeArgs.Arguments = null;
+                    throw new InvalidOperationException("Invalid variable value.");
+                }
+                var executable = variable.Value as IExecutable;
+                if (executable == null)
+                {
+                    throw new InvalidOperationException("Variable is not an executable.");
+                }
 
-                    var.Execute(exeArgs);
-                    a.Arguments = a.Arguments.Concat(new[] { var }).ToArray();
+                var a = new ExecutableArgs
+                {
+                    //Arguments = Arguments?.Values?.Select(x => x.Value).ToArray(),
+                    Arguments = new IVariable[0],
+                    Scope = args.Scope?.CreateChild(),
+                };
+                
+                var vars = _argsCollection;
+                if (vars != null)
+                {
+                    foreach (var var in vars)
+                    {
+                        var exeArgs = new ExecutableArgs();
+                        exeArgs.Scope = a.Scope;
+                        exeArgs.Arguments = null;
+
+                        var.Execute(exeArgs);
+                        a.Arguments = a.Arguments.Concat(new[] { var }).ToArray();
+                    }
+                }
+
+                result = executable.Execute(a);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                IEvent errorEvent;
+                if (_eventsCollection._events.TryGetValue("error", out errorEvent) && errorEvent != null)
+                {
+                    var exceptionVar = new Variable
+                    {
+                        Key = "$$Exception",
+                        Value = ex,
+                    };
+                    args.Scope?.SetVariable(exceptionVar);
+                    errorEvent.Execute(args);
+                }
+                return result;
+
+                //throw;
+            }
+            finally
+            {
+                IEvent completeEvent;
+                if (_eventsCollection._events.TryGetValue("complete", out completeEvent) && completeEvent != null)
+                {
+                    var resultVar = new Variable
+                    {
+                        Key = "$$Result",
+                        Value = result,
+                    };
+                    args.Scope?.SetVariable(resultVar);
+                    completeEvent.Execute(args);
                 }
             }
-
-            var result = executable.Execute(a);
-            return result;
         }
 
         public void Configure(IXInstantiator instantiator, XElement element)

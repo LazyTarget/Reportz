@@ -39,7 +39,7 @@
 				<event key="error">
 					<alert>Something went wrong!! Error message: $$Exception.Message</alert>
 				</event>
-				<event key="completed">
+				<event key="complete">
 					<variable key="json">$$Result</variable>
 				</event>
 			</events>
@@ -54,11 +54,13 @@
 				<event key="error">
 					<alert>Something went wrong!! Error message: $$Exception.Message</alert>
 				</event>
-				<event key="completed">
+				<event key="complete">
 					<variable key="csv">$$Result</variable>
 				</event>
 			</events>
 		</run-executable>
+
+    <variable key="$$Result" var="csv"></variable>
 	</execute>
 
 	<events>

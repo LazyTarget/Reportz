@@ -26,7 +26,7 @@ namespace Reportz
 
             IExecutableArgs arg = null;
             var result = script.Execute(arg);
-            Console.WriteLine("Script result: " + result);
+            Console.WriteLine("Script result: " + result?.Result);
         }
     }
 }
