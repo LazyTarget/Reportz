@@ -18,7 +18,7 @@ namespace Reportz.Scripting.Classes
     //    public Type Type => _explicitType ?? Value?.GetType();
     //}
 
-    public class Variable : IVariable, IExecutable, IXConfigurable
+    public class Variable : IVariable, IExecutable, IXConfigurable, ICloneable
     {
         private IXInstantiator _instantiator;
         private Type _explicitType;
@@ -73,7 +73,10 @@ namespace Reportz.Scripting.Classes
                                 
                         }
 
-                        var key = word.TrimStart('$');
+                        //var key = word.TrimStart('$');
+                        var key = word;
+                        // todo: parse sub properties/-methods/-indexors
+
                         var variable = args.Scope?.GetVariable(key);
                         var val = variable?.Value;
                         word = val?.ToString();
@@ -118,6 +121,19 @@ namespace Reportz.Scripting.Classes
                     Value = typeConverter.Convert(Value, _explicitType);
                 }
             }
+        }
+
+        public object Clone()
+        {
+            var result = new Variable();
+            result.Key = Key;
+            result.Value = Value;
+            result.Instantiated = Instantiated;
+
+            result._explicitType = _explicitType;
+            result._element = _element;
+            result._instantiator = _instantiator;
+            return result;
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Reportz.Scripting.Interfaces
 {
-    public interface IVariable : IExecutable
+    public interface IVariable : IExecutable, ICloneable
     {
         string Key { get; }
         object Value { get; set; }

@@ -19,6 +19,8 @@ namespace Reportz.Scripting.Classes
 
         public IExecutableResult Execute(IExecutableArgs args)
         {
+            IVariable resultVar = null;
+
             IExecutableResult result = null;
             var executables = _elements.OfType<IExecutable>().ToList();
             foreach (var executable in executables)
@@ -31,14 +33,21 @@ namespace Reportz.Scripting.Classes
                 };
                 var r = executable.Execute(a);
 
+
                 if (executables.Count == 1)
                 {
                     result = r;
                 }
+                else
+                {
+                    //var tmp = args.Scope.GetVariable("$$Result");
+                    var tmp = a.Scope.GetVariable("$$Result");
+                    if (tmp != null)
+                        resultVar = tmp;
+                }
             }
 
-
-            var resultVar = args.Scope.GetVariable("$$Result");
+            
             if (resultVar != null)
             {
                 result = new ExecutableResult

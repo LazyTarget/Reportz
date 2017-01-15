@@ -44,7 +44,8 @@ namespace Reportz.Scripting.Classes
 
         public IVariable GetVariable(string key)
         {
-            var localOnly = key.StartsWith("$$");
+            var localOnly = false;
+            //var localOnly = key.StartsWith("$$");
             //if (localOnly)
             //    key = key.Substring("$$".Length);
 
@@ -64,8 +65,10 @@ namespace Reportz.Scripting.Classes
             var v = GetVariable(variable.Key);
             if (v != null)
             {
-                v.Value = variable.Value;
-                // todo: create deep copy in current scope?
+                //v.Value = variable.Value;
+
+                var copy = (IVariable) v.Clone();
+                _data[copy.Key] = copy;
             }
             else
             {
