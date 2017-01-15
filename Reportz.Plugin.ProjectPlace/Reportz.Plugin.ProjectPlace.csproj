@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -50,7 +54,16 @@
       <Name>Reportz.Scripting</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)Reportz\$(OutDir)$(ProjectName).dll"
+copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)Reportz\$(OutDir)$(ProjectName).pdb"
+copy /Y "$(TargetDir)Newtonsoft.Json.dll" "$(SolutionDir)Reportz\$(OutDir)Newtonsoft.Json.dll"
+copy /Y "$(TargetDir)Newtonsoft.Json.xml" "$(SolutionDir)Reportz\$(OutDir)Newtonsoft.Json.xml"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

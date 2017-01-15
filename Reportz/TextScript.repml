@@ -9,8 +9,8 @@
 					</arguments>
 				</ctor>
 				<properties>
-					<add key="Username" type="string">Bill Gates</add>
-					<add key="Password" type="string">Apple Sux!</add>
+					<add key="Username" type="string">bill.gates@microsoft.com</add>
+					<add key="Password" type="string">AppleSux</add>
 					<add key="Url" type="string"></add>
 				</properties>
 			</instantiate>
@@ -27,9 +27,9 @@
 				</properties>
 			</instantiate>
 		</variable>
-
+    
 		<variable key="startDate" type="DateTime">2017-01-01</variable>
-
+    
 		<run-executable key="TimeReportExtractor">
 			<arguments>
 				<add key="startDate" var="startDate" />
@@ -45,6 +45,9 @@
 			</events>
 		</run-executable>
 
+    <alert>Json result: $json</alert>
+    
+    
 		<run-executable key="JsonToCsvFormatter">
 			<arguments>
 				<add key="json" var="json" />
@@ -64,13 +67,13 @@
     <alert>Csv result: $csv</alert>
     
 	</execute>
-
+  
 	<events>
 		<event key="error">
 			<alert>Something went wrong when running script!! Error message: $$Exception.Message</alert>
 		</event>
 		<event key="completed">
-			
+      
 		</event>
 	</events>
 </script>
