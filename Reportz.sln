@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reportz.Plugin.ProjectPlace
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{F3F67F62-F24D-4943-A6B5-CDB85892DA44}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reportz.Tests", "Reportz.Tests\Reportz.Tests.csproj", "{CE9B8D51-9F32-42D9-A0BD-5B0E9BA4D517}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{4B69B7CE-D025-483C-AC76-0A6E66DFAFB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B69B7CE-D025-483C-AC76-0A6E66DFAFB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B69B7CE-D025-483C-AC76-0A6E66DFAFB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE9B8D51-9F32-42D9-A0BD-5B0E9BA4D517}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE9B8D51-9F32-42D9-A0BD-5B0E9BA4D517}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE9B8D51-9F32-42D9-A0BD-5B0E9BA4D517}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE9B8D51-9F32-42D9-A0BD-5B0E9BA4D517}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

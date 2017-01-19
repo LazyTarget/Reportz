@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{60727EA6-1FC4-440F-97F7-2500F5DAFBFE}</ProjectGuid>
+    <ProjectGuid>{CE9B8D51-9F32-42D9-A0BD-5B0E9BA4D517}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Reportz.Scripting</RootNamespace>
-    <AssemblyName>Reportz.Scripting</AssemblyName>
+    <RootNamespace>Reportz.Tests</RootNamespace>
+    <AssemblyName>Reportz.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,12 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Lux, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Lux.1.0.2\lib\net45\Lux.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Moq, Version=4.2.1510.2205, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>..\packages\Moq.4.2.1510.2205\lib\net40\Moq.dll</HintPath>
+    <Reference Include="nunit.framework, Version=3.6.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.6.0\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -48,34 +44,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\ArgCollection.cs" />
-    <Compile Include="Classes\Event.cs" />
-    <Compile Include="Classes\EventCollection.cs" />
-    <Compile Include="Classes\ExecutableArgs.cs" />
-    <Compile Include="Classes\ExecutableEnvironment.cs" />
-    <Compile Include="Classes\ExecutableResult.cs" />
-    <Compile Include="Classes\Script.cs" />
-    <Compile Include="Classes\ScriptParser.cs" />
-    <Compile Include="Classes\Variable.cs" />
-    <Compile Include="Classes\VariableScope.cs" />
-    <Compile Include="Commands\AlertCommand.cs" />
-    <Compile Include="Commands\RunExecutableCommand.cs" />
-    <Compile Include="Interfaces\IEvent.cs" />
-    <Compile Include="Interfaces\IExecutable.cs" />
-    <Compile Include="Interfaces\IExecutableArgs.cs" />
-    <Compile Include="Interfaces\IExecutableEnvironment.cs" />
-    <Compile Include="Interfaces\IExecutableResult.cs" />
-    <Compile Include="Interfaces\IHasArguments.cs" />
-    <Compile Include="Interfaces\IHasEvents.cs" />
-    <Compile Include="Interfaces\IScript.cs" />
-    <Compile Include="Interfaces\IVariable.cs" />
+    <Compile Include="ScriptingTests\ScriptParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScriptExtensions.cs" />
-    <Compile Include="Xml\IXConfigurable.cs" />
-    <Compile Include="Xml\IXInstantiator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Reportz.Core\Reportz.Core.csproj">
+      <Project>{d6260d79-07fa-4179-989f-7b01007ad218}</Project>
+      <Name>Reportz.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Reportz.Scripting\Reportz.Scripting.csproj">
+      <Project>{60727ea6-1fc4-440f-97f7-2500f5dafbfe}</Project>
+      <Name>Reportz.Scripting</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

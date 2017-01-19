@@ -85,6 +85,9 @@ namespace Reportz.Scripting.Commands
                 }
                 return result;
 
+                // todo: implement 'catch' logic. catch="true" on <event key="error">. Or only if wrapped inside <try> <catch>
+                // todo: implement test <throw> tag
+
                 //throw;
             }
             finally
