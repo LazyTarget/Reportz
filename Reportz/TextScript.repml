@@ -27,6 +27,30 @@
 				</properties>
 			</instantiate>
 		</variable>
+
+    <variable key="JsonToDataTableFormatter">
+      <instantiate>
+        <type>Reportz.Plugin.ProjectPlace.JsonToDataTableFormatter, Reportz.Plugin.ProjectPlace</type>
+        <ctor>
+          <arguments>
+          </arguments>
+        </ctor>
+        <properties>
+        </properties>
+      </instantiate>
+    </variable>
+
+    <variable key="XlsxUpdator">
+      <instantiate>
+        <type>Reportz.Helpers.Excel.XlsxUpdator, Reportz.Helpers.Excel</type>
+        <ctor>
+          <arguments>
+          </arguments>
+        </ctor>
+        <properties>
+        </properties>
+      </instantiate>
+    </variable>
     
 		<variable key="startDate" type="DateTime">2017-01-01</variable>
     
@@ -70,7 +94,37 @@
 			</events>
 		</run-executable>
     
+    <run-executable key="JsonToDataTableFormatter">
+			<arguments>
+				<add key="json" var="json" />
+			</arguments>
+			<events>
+				<event key="error">
+					<alert>Something went wrong!! Error message: $$Exception.Message</alert>
+				</event>
+				<event key="complete">
+          <variable key="dataTable" var="$$Result" depth="root" />
+				</event>
+			</events>
+		</run-executable>
+    
     <alert>Csv result: $csv</alert>
+    <alert>DataTable result: $dataTable</alert>
+    
+
+    <run-executable key="XlsxUpdator">
+      <arguments>
+        <add key="data" var="dataTable" />
+      </arguments>
+      <events>
+        <event key="error">
+          <alert>Something went wrong!! Error message: $$Exception.Message</alert>
+        </event>
+        <event key="complete">
+          <variable key="dataTable" var="$$Result" depth="root" />
+        </event>
+      </events>
+    </run-executable>
     
 	</execute>
   

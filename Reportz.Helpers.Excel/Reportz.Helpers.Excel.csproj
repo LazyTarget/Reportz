@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4B69B7CE-D025-483C-AC76-0A6E66DFAFB0}</ProjectGuid>
+    <ProjectGuid>{82C71546-F7F0-450F-B539-ACFC6899B493}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Reportz.Plugin.ProjectPlace</RootNamespace>
-    <AssemblyName>Reportz.Plugin.ProjectPlace</AssemblyName>
+    <RootNamespace>Reportz.Helpers.Excel</RootNamespace>
+    <AssemblyName>Reportz.Helpers.Excel</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,8 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="EPPlus, Version=4.1.0.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.1.0\lib\net40\EPPlus.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -44,26 +44,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="JsonToDataTableFormatter.cs" />
-    <Compile Include="TimeReportJsonToCsvFormatter.cs" />
-    <Compile Include="TimeReportExtractor.cs" />
+    <Compile Include="XlsxUpdator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Reportz.Scripting\Reportz.Scripting.csproj">
-      <Project>{60727EA6-1FC4-440F-97F7-2500F5DAFBFE}</Project>
-      <Name>Reportz.Scripting</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\Reportz.Scripting\Reportz.Scripting.csproj">
+      <Project>{60727ea6-1fc4-440f-97f7-2500f5dafbfe}</Project>
+      <Name>Reportz.Scripting</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)Reportz\$(OutDir)$(ProjectName).dll"
 copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)Reportz\$(OutDir)$(ProjectName).pdb"
-copy /Y "$(TargetDir)Newtonsoft.Json.dll" "$(SolutionDir)Reportz\$(OutDir)Newtonsoft.Json.dll"
-copy /Y "$(TargetDir)Newtonsoft.Json.xml" "$(SolutionDir)Reportz\$(OutDir)Newtonsoft.Json.xml"</PostBuildEvent>
+copy /Y "$(TargetDir)EPPlus.dll" "$(SolutionDir)Reportz\$(OutDir)EPPlus.dll"
+copy /Y "$(TargetDir)EPPlus.xml" "$(SolutionDir)Reportz\$(OutDir)EPPlus.xml"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
