@@ -35,13 +35,26 @@ namespace Reportz.Scripting.Classes
         public Type Type => _explicitType ?? Value?.GetType();
         public bool Instantiated => _instantiated ?? _element?.Element("instantiate") == null;
 
-        
+#if DEBUG
+        public bool Executed { get; private set; }
+#else
+        private bool Executed { get; private set; }
+#endif
+
+
         public IExecutableResult Execute(IExecutableArgs args)
         {
-            // instantiate
+            if (Executed)
+            {
+                throw new InvalidOperationException("Variable has already been executed");
+                return null;
+            }
+            
+
             var instantiateElem = _element?.Element("instantiate");
             if (instantiateElem != null)
             {
+                // Instantiate value
                 if (_instantiator != null)
                 {
                     var value = _instantiator.InstantiateElement(instantiateElem);
@@ -55,15 +68,53 @@ namespace Reportz.Scripting.Classes
             }
             else if (_element?.Attribute("var") != null)
             {
+                // Parse value from variable
                 var key = _element.Attribute("var")?.Value;
                 var val = args.Scope?.GetVariable(key)?.Value;
+                if (_explicitType != null)      // todo: should keep?
+                {
+                    var typeConverter = new Lux.Serialization.Xml.XmlSettings().Converter;
+                    val = typeConverter.Convert(val, _explicitType);
+                }
                 Value = val;
             }
-            
+
+
+            // Should evaluate value?
+            bool? eval = null;
+            var evalTmp = _element?.Attribute("eval")?.Value;
+            if (!string.IsNullOrWhiteSpace(evalTmp))
+                eval = bool.Parse(evalTmp);
+
             if (Value is string)
             {
-                var val = _instantiator.EvaluateExpression(args.Scope, Value.ToString());
-                Value = val;
+                if (eval.HasValue && !eval.Value)
+                {
+                    // Explicitly disabled eval
+                }
+                else
+                {
+                    if (!eval.HasValue)
+                    {
+                        // Dynamically determine whether to eval
+                        var str = Value.ToString();
+                        eval = str.StartsWith("$");     // todo: more rules for when to enable evaluation (by default)?
+                    }
+
+                    if (eval.GetValueOrDefault())
+                    {
+                        var val = _instantiator.EvaluateExpression(args.Scope, Value.ToString());
+                        Value = val;
+                    }
+                    else
+                    {
+
+                    }
+                }
+            }
+            else
+            {
+                
             }
 
 
@@ -87,6 +138,7 @@ namespace Reportz.Scripting.Classes
             {
                 Result = success,
             };
+            Executed = true;
             return result;
         }
 
@@ -102,12 +154,26 @@ namespace Reportz.Scripting.Classes
             {
                 Value = element.Value;
             }
+            else
+            {
+                var instantiateElem = _element?.Element("instantiate");
+                if (instantiateElem != null)
+                {
+                    // Instantiation is done in Execute(..)
+                }
+                else if (element.Attribute("value") == null && element.HasElements)
+                {
+                    var rootChild = element.Elements().FirstOrDefault();
+                    Value = instantiator.InstantiateElement(rootChild);
+                }
+            }
+            
 
-            var typeName = ScriptParser.MatchTypeAlias(element.Attribute("type")?.Value);
+            var typeName = element.Attribute("type")?.Value;
             if (!string.IsNullOrWhiteSpace(typeName))
             {
-                _explicitType = Type.GetType(typeName, false, true);
-                if (_explicitType != null)
+                var typeResolved = _instantiator.TryResolveType(typeName, out _explicitType);
+                if (typeResolved && _explicitType != null)
                 {
                     var typeConverter = new Lux.Serialization.Xml.XmlSettings().Converter;
                     Value = typeConverter.Convert(Value, _explicitType);

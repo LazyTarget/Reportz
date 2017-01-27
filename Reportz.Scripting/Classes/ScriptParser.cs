@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -31,6 +32,7 @@ namespace Reportz.Scripting.Classes
             _knownTypes["event"] = typeof(Event);
             _knownTypes["alert"] = typeof(AlertCommand);
             _knownTypes["run-executable"] = typeof(RunExecutableCommand);
+            _knownTypes["invoke-method"] = typeof(InvokeMethodCommand);
 
             _knownTypes["events"] = typeof(EventCollection);
             _knownTypes["arguments"] = typeof(ArgCollection);
@@ -76,10 +78,10 @@ namespace Reportz.Scripting.Classes
                     elementType = instantiateElem?.Element("type")?.Value;
                     if (string.IsNullOrEmpty(elementType))
                         throw new Exception($"<Type> element is required in <Instantiate>.");
-                    elementType = MatchTypeAlias(elementType);
-                    type = Type.GetType(elementType, false, true);
-                    if (type == null)
+                    var typeResolved = TryResolveType(elementType, out type);
+                    if (!typeResolved || type == null)
                         throw new Exception($"Type '{elementType}' not found");
+                    elementType = type.AssemblyQualifiedName;
 
                     var ctorElem = instantiateElem.Element("ctor");
                     if (ctorElem != null)
@@ -117,10 +119,10 @@ namespace Reportz.Scripting.Classes
                 }
                 else if (!string.IsNullOrEmpty(elementType))
                 {
-                    elementType = MatchTypeAlias(elementType);
-                    type = Type.GetType(elementType, false, true);
-                    if (type == null)
+                    var typeResolved = TryResolveType(elementType, out type);
+                    if (!typeResolved || type == null)
                         throw new Exception($"Type '{elementType}' not found");
+                    elementType = type.AssemblyQualifiedName;
                 }
                 else
                 {
@@ -198,7 +200,7 @@ namespace Reportz.Scripting.Classes
         }
 
 
-        public object EvaluateExpression(VariableScope scope, string expression)
+        public virtual object EvaluateExpression(VariableScope scope, string expression)
         {
             if (string.IsNullOrWhiteSpace(expression))
                 return expression;
@@ -208,6 +210,8 @@ namespace Reportz.Scripting.Classes
             var words = expression.Split(' ').ToArray();
             for (var i = 0; i < words.Length; i++)
             {
+                // todo: also split by: ${$now}
+
                 var word = words[i];
                 if (word.ElementAtOrDefault(0) == '$')
                 {
@@ -215,42 +219,77 @@ namespace Reportz.Scripting.Classes
                     {
 
                     }
-                    
-                    var key = word;
-                    
-                    // todo: parse sub properties/-methods/-indexors
 
-                    IVariable variable = scope?.GetVariable(key);
-                    while (variable == null && key.StartsWith("$"))
+                    object value;
+                    var key = word;
+                    if (TryEvaluateExpressionAlias(key, out value))
                     {
-                        key = key.Substring(1);
-                        variable = scope?.GetVariable(key);
+                        
+                    }
+                    else
+                    {
+                        // todo: parse sub properties/-methods/-indexors
+
+                        IVariable variable = scope?.GetVariable(key);
+                        while (variable == null && key.StartsWith("$"))
+                        {
+                            key = key.Substring(1);
+                            variable = scope?.GetVariable(key);
+                        }
+                        value = variable?.Value;
                     }
                     
-                    var val = variable?.Value;
-                    word = val?.ToString();
+                    word = value?.ToString();
                     words[i] = word;
                 }
             }
-            var result = string.Join(" ", words);
+
+            var result = words.All(x => x == null)
+                ? null
+                : string.Join(" ", words);
             return result;
+        }
+        
+
+        public static bool TryEvaluateExpressionAlias(string key, out object value)
+        {
+            var success = true;
+            key = key?.ToLower();
+            if (key == "$$null")
+            {
+                value = null;
+            }
+            else if (key == "$$now")
+            {
+                value = DateTime.Now;
+            }
+            else
+            {
+                value = null;
+                success = false;
+            }
+            return success;
         }
 
 
-        public static string MatchTypeAlias(string typeName)
+        public virtual bool TryResolveType(string typeName, out Type type)
         {
+            type = null;
             if (string.IsNullOrWhiteSpace(typeName))
-                return null;
-            var type = Type.GetType(typeName, false, true);
-            if (type != null)
-                typeName = type.AssemblyQualifiedName;
-            else
+                return false;
+            type = Type.GetType(typeName, false, true);
+            if (type == null)
             {
                 type = Type.GetType("System." + typeName, false, true);
-                if (type != null)
-                    typeName = type.AssemblyQualifiedName;
             }
-            return typeName;
+            if (type == null)
+            {
+                var mscorlib = typeof (Object).Assembly;
+                type = mscorlib.GetType(typeName, false, true);
+            }
+
+            var resolved = type != null;
+            return resolved;
         }
     }
 }

@@ -19,41 +19,28 @@
 		<variable key="JsonToCsvFormatter">
 			<instantiate>
 				<type>Reportz.Plugin.ProjectPlace.TimeReportJsonToCsvFormatter, Reportz.Plugin.ProjectPlace</type>
-				<ctor>
-					<arguments>
-					</arguments>
-				</ctor>
-				<properties>
-				</properties>
 			</instantiate>
 		</variable>
 
     <variable key="JsonToDataTableFormatter">
       <instantiate>
         <type>Reportz.Plugin.ProjectPlace.JsonToDataTableFormatter, Reportz.Plugin.ProjectPlace</type>
-        <ctor>
-          <arguments>
-          </arguments>
-        </ctor>
-        <properties>
-        </properties>
       </instantiate>
     </variable>
 
     <variable key="XlsxUpdator">
       <instantiate>
         <type>Reportz.Helpers.Excel.XlsxUpdator, Reportz.Helpers.Excel</type>
-        <ctor>
-          <arguments>
-          </arguments>
-        </ctor>
-        <properties>
-        </properties>
       </instantiate>
     </variable>
     
 		<variable key="startDate" type="DateTime">2017-01-01</variable>
+    <variable key="endDate" type="DateTime">2017-01-15</variable>
+    <variable key="jsonFilePath" type="string">TimeReportJson_20170101-20170115</variable>
+    <!--<variable key="jsonFilePath" type="string" eval="true">TimeReportJson_$startDate-$endDate</variable>-->
     
+    
+    <!-- todo: [script] Only make request to extractor if no local json data file found (cache).  -->
 		<run-executable key="TimeReportExtractor">
 			<arguments>
 				<add key="startDate" var="startDate" />
@@ -68,6 +55,50 @@
 				</event>
 			</events>
 		</run-executable>
+    
+    <invoke-method>
+			<arguments>
+        <add key="type" value="System.IO.File" />
+				<!--<add key="type" value="System.IO.File, mscorlib" />-->
+        <!--<add key="instance" value="$$null" />--><!--Optional if static-->
+				<add key="method">WriteAllText</add>
+        <add key="arguments">
+          <arguments>
+            <add key="path" var="jsonFilePath" />
+            <add key="contents" var="json" />
+          </arguments>
+        </add>
+			</arguments>
+			<events>
+				<event key="error">
+					<alert>Something went wrong!! Error message: $$Exception.Message</alert>
+				</event>
+				<event key="complete">
+					<alert>Successfully wrote jsonDataFile. Path: $jsonFilePath ( $path )</alert>
+				</event>
+			</events>
+		</invoke-method>
+    
+    <invoke-method>
+			<arguments>
+        <add key="type" value="System.IO.File" />
+				<add key="instance" value="$$null" />
+				<add key="method">ReadAllText</add>
+        <add key="arguments">
+          <arguments>
+            <add key="path" var="jsonFilePath" type="string" />
+          </arguments>
+        </add>
+			</arguments>
+			<events>
+				<event key="error">
+					<alert>Something went wrong!! Error message: $$Exception.Message</alert>
+				</event>
+				<event key="complete">
+					<variable key="json" depth="root">$$Result</variable>
+				</event>
+			</events>
+		</invoke-method>
 
     <alert>Json result: $json</alert>
     

@@ -59,6 +59,7 @@
     <Compile Include="Classes\Variable.cs" />
     <Compile Include="Classes\VariableScope.cs" />
     <Compile Include="Commands\AlertCommand.cs" />
+    <Compile Include="Commands\InvokeMethodCommand.cs" />
     <Compile Include="Commands\RunExecutableCommand.cs" />
     <Compile Include="Interfaces\IEvent.cs" />
     <Compile Include="Interfaces\IExecutable.cs" />

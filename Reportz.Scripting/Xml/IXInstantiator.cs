@@ -13,5 +13,7 @@ namespace Reportz.Scripting.Xml
         object InstantiateElement(XElement element);
 
         object EvaluateExpression(VariableScope scope, string expression);
+
+        bool TryResolveType(string typeName, out Type type);
     }
 }
