@@ -36,12 +36,13 @@
     
 		<variable key="startDate" type="DateTime">2017-01-01</variable>
     <variable key="endDate" type="DateTime">2017-01-15</variable>
-    <variable key="jsonFilePath" type="string">TimeReportJson_20170101-20170115</variable>
+    <variable key="jsonFilePath" type="string">Out/TimeReportJson_20170101-20170115.json</variable>
     <!--<variable key="jsonFilePath" type="string" eval="true">TimeReportJson_$startDate-$endDate</variable>-->
     
     
     <!-- todo: [script] Only make request to extractor if no local json data file found (cache).  -->
-		<run-executable key="TimeReportExtractor">
+		<!--
+    <run-executable key="TimeReportExtractor">
 			<arguments>
 				<add key="startDate" var="startDate" />
 				<add key="endDate" type="DateTime">2017-01-15</add>
@@ -59,8 +60,6 @@
     <invoke-method>
 			<arguments>
         <add key="type" value="System.IO.File" />
-				<!--<add key="type" value="System.IO.File, mscorlib" />-->
-        <!--<add key="instance" value="$$null" />--><!--Optional if static-->
 				<add key="method">WriteAllText</add>
         <add key="arguments">
           <arguments>
@@ -74,15 +73,17 @@
 					<alert>Something went wrong!! Error message: $$Exception.Message</alert>
 				</event>
 				<event key="complete">
-					<alert>Successfully wrote jsonDataFile. Path: $jsonFilePath ( $path )</alert>
+					<alert>Successfully wrote jsonDataFile at path: $path</alert>
 				</event>
 			</events>
 		</invoke-method>
+    -->
+    
     
     <invoke-method>
 			<arguments>
         <add key="type" value="System.IO.File" />
-				<add key="instance" value="$$null" />
+				<add key="instance" value="$$null" /><!--Optional if static-->
 				<add key="method">ReadAllText</add>
         <add key="arguments">
           <arguments>
@@ -142,10 +143,13 @@
     <alert>Csv result: $csv</alert>
     <alert>DataTable result: $dataTable</alert>
     
-
+    
     <run-executable key="XlsxUpdator">
       <arguments>
         <add key="data" var="dataTable" />
+        <add key="sheetName" value="Sheet1" />
+        <add key="loadFileName" value="Out/ExcelDoc_Template.xlsx" />
+        <add key="saveFileName" value="Out/ExcelDoc_20170127.xlsx" />
       </arguments>
       <events>
         <event key="error">

@@ -29,10 +29,16 @@ namespace Reportz.Helpers.Excel
                 var ws = doc as ExcelWorksheet;
                 if (ws == null)
                 {
-                    var fileInfo = new FileInfo("ExcelDoc.xlsx");
+                    var fileName = args?.Arguments?.FirstOrDefault(x => x.Key == "loadFileName")?.Value?.ToString()
+                                   ?? "ExcelDoc.xlsx";
+                    var fileInfo = new FileInfo(fileName);
                     pkg = new ExcelPackage(fileInfo);
-                    ws = pkg.Workbook.Worksheets.Add("Sheet1");
-                    //ws = new ExcelWorksheet();
+
+
+                    var sheetName = args?.Arguments?.FirstOrDefault(x => x.Key == "sheetName")?.Value?.ToString()
+                                    ?? "Sheet1";
+                    if (pkg.Workbook.Worksheets.All(x => x.Name != sheetName))
+                        ws = pkg.Workbook.Worksheets.Add(sheetName);
                 }
 
 
@@ -69,7 +75,14 @@ namespace Reportz.Helpers.Excel
             }
             finally
             {
-                pkg?.Save();
+                var fileName = args?.Arguments?.FirstOrDefault(x => x.Key == "saveFileName")?.Value?.ToString();
+                if (!string.IsNullOrWhiteSpace(fileName))
+                {
+                    var fileInfo = new FileInfo(fileName);
+                    pkg?.SaveAs(fileInfo);
+                }
+                else
+                    pkg?.Save();
             }
         }
     }
