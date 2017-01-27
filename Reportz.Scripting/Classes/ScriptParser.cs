@@ -40,6 +40,13 @@ namespace Reportz.Scripting.Classes
         }
 
 
+        protected virtual IExpressionEvaluator GetExpressionEvaluator(VariableScope scope)
+        {
+            var evaluator = new ScopedExpressionEvaluator(scope);
+            return evaluator;
+        }
+
+
         public IScript Parse(string text)
         {
             try
@@ -199,78 +206,14 @@ namespace Reportz.Scripting.Classes
             }
         }
 
-
+        
         public virtual object EvaluateExpression(VariableScope scope, string expression)
         {
-            if (string.IsNullOrWhiteSpace(expression))
-                return expression;
-            if (expression.IndexOf('$') < 0)
-                return expression;
-
-            var words = expression.Split(' ').ToArray();
-            for (var i = 0; i < words.Length; i++)
-            {
-                // todo: also split by: ${$now}
-
-                var word = words[i];
-                if (word.ElementAtOrDefault(0) == '$')
-                {
-                    if (word.ElementAtOrDefault(1) == '$')
-                    {
-
-                    }
-
-                    object value;
-                    var key = word;
-                    if (TryEvaluateExpressionAlias(key, out value))
-                    {
-                        
-                    }
-                    else
-                    {
-                        // todo: parse sub properties/-methods/-indexors
-
-                        IVariable variable = scope?.GetVariable(key);
-                        while (variable == null && key.StartsWith("$"))
-                        {
-                            key = key.Substring(1);
-                            variable = scope?.GetVariable(key);
-                        }
-                        value = variable?.Value;
-                    }
-                    
-                    word = value?.ToString();
-                    words[i] = word;
-                }
-            }
-
-            var result = words.All(x => x == null)
-                ? null
-                : string.Join(" ", words);
+            var evaluator = GetExpressionEvaluator(scope);
+            var result = evaluator.EvaluateExpression(expression);
             return result;
         }
         
-
-        public static bool TryEvaluateExpressionAlias(string key, out object value)
-        {
-            var success = true;
-            key = key?.ToLower();
-            if (key == "$$null")
-            {
-                value = null;
-            }
-            else if (key == "$$now")
-            {
-                value = DateTime.Now;
-            }
-            else
-            {
-                value = null;
-                success = false;
-            }
-            return success;
-        }
-
 
         public virtual bool TryResolveType(string typeName, out Type type)
         {
