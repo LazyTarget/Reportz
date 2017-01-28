@@ -90,8 +90,9 @@ namespace Reportz.Tests.ScriptingTests
             Assert.AreEqual(expected, actual);
         }
 
+
         [Test]
-        public void MultipleWrappedInterpolatedExpression_SystemKey_Empty()
+        public void MultipleWrappedInterpolatedExpression_SystemKeys()
         {
             var sut = new ExpressionEvaluator();
             object expected = $"Current day is: {string.Empty}";

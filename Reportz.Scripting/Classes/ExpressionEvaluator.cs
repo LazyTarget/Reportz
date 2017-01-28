@@ -136,12 +136,15 @@ namespace Reportz.Scripting.Classes
                 var word = words[i];
                 if (word.ElementAtOrDefault(0) == '$')
                 {
-                    if (word.ElementAtOrDefault(1) == '$')
+                    var key = word;
+                    if (word.ElementAtOrDefault(1) == '{')
                     {
-
+                        var ei = word.IndexOf('}');
+                        key = ei > 0
+                            ? word.Substring("${".Length, ei - "${".Length)
+                            : word.Substring("${".Length);
                     }
 
-                    var key = word;
                     object value = EvaluateObject(key);
                     resultParts.Add(value);
 
@@ -150,7 +153,8 @@ namespace Reportz.Scripting.Classes
                 }
             }
             str = string.Join(" ", words);
-                
+            resultParts = words.Cast<object>().ToList();
+
 
             //IEnumerator<Expr> enumerator;
             //do
@@ -174,12 +178,13 @@ namespace Reportz.Scripting.Classes
             //    }
             //} while (enumerator.Current != null);
 
-            var result = resultParts.Count == 1
-                ? resultParts.Single()
-                : (resultParts.All(x => x == null)
+            var result = resultParts.Count > 1
+                ? (resultParts.All(x => x == null)
                     ? null
-                    : str
-                    );
+                    : str)
+                : (resultParts.Count == 1
+                    ? resultParts.Single()
+                    : null);
             return result;
         }
 
