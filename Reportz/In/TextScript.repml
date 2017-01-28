@@ -38,6 +38,42 @@
     <variable key="endDate" type="DateTime">2017-01-15</variable>
     <variable key="jsonFilePath" type="string">Out/TimeReportJson_20170101-20170115.json</variable>
     <!--<variable key="jsonFilePath" type="string" eval="true">TimeReportJson_${$startDate}-${$endDate}</variable>-->
+
+    
+    <invoke-method>
+      <arguments>
+        <add key="type" value="System.IO.File" />
+        <add key="method">Exists</add>
+        <add key="arguments">
+          <arguments>
+            <add key="path" var="jsonFilePath" />
+          </arguments>
+        </add>
+      </arguments>
+      <events>
+        <event key="complete">
+          <variable key="jsonFileExists" depth="root">$$Result</variable>
+          <alert>JsonDataFile exists: $jsonFileExists</alert>
+        </event>
+      </events>
+    </invoke-method>
+
+
+    <if-group>
+      <if>
+        <conditions>
+          <add>$jsonFileExists</add>
+        </conditions>
+        <execute>
+          <alert>JsonDataFile exists</alert>
+        </execute>
+      </if>
+      <elseIf>
+        <execute>
+          <alert>JsonDataFile doesn't exist!</alert>
+        </execute>
+      </elseIf>
+    </if-group>
     
     
     <!-- todo: [script] Only make request to extractor if no local json data file found (cache).  -->

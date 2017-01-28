@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Reportz.Scripting.Attributes;
 using Reportz.Scripting.Interfaces;
 
 namespace Reportz.Scripting.Classes
 {
+    [ScriptElementAlias("execute")]
     public class ExecutableEnvironment : IExecutableEnvironment, IScriptElement
     {
 #if DEBUG
@@ -15,6 +17,12 @@ namespace Reportz.Scripting.Classes
 #else
         private readonly IList<object> _elements = new List<object>();
 #endif
+
+        public ExecutableEnvironment()
+        {
+            
+        }
+
 
         public IExecutableResult Execute(IExecutableArgs args)
         {

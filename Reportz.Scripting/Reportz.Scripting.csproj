@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\ScriptElementAliasAttribute.cs" />
+    <Compile Include="Classes\ConditionsCollection.cs" />
+    <Compile Include="Classes\IfGroup.cs" />
     <Compile Include="Classes\ArgCollection.cs" />
     <Compile Include="Classes\Event.cs" />
     <Compile Include="Classes\EventCollection.cs" />
@@ -62,6 +64,7 @@
     <Compile Include="Classes\Variable.cs" />
     <Compile Include="Classes\VariableScope.cs" />
     <Compile Include="Commands\AlertCommand.cs" />
+    <Compile Include="Commands\IfCommand.cs" />
     <Compile Include="Commands\InvokeMethodCommand.cs" />
     <Compile Include="Commands\RunExecutableCommand.cs" />
     <Compile Include="Interfaces\IEvent.cs" />
@@ -82,9 +85,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Xml\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
