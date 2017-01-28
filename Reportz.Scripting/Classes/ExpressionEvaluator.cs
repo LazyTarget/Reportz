@@ -44,9 +44,76 @@ namespace Reportz.Scripting.Classes
         }
 
 
-        public virtual Expr FetchExpressionParts(string expression)
+        public IEnumerable<Expr> EnumerateExpressionParts(string expression)
         {
-            throw new NotImplementedException();
+            var rootExpr = new Expr
+            {
+                Expression = expression,
+                Index = 0,
+                Root = null,
+                Value = null,
+                SubExpressions = new Expr[0],
+            };
+
+            return EnumerateExpressionParts(expression, rootExpr);
+        }
+
+        protected virtual IEnumerable<Expr> EnumerateExpressionParts(string expression, Expr rootExpr)
+        {
+            var index = expression.IndexOf("$");
+            while (index >= 0 && index + 1 < expression.Length)
+            {
+                var s = expression.Substring(index).TrimStart('$').First();
+                var isGroup = s == '{';
+                var endChars = new char[] {'.', '[', ']', '{', '}', '$'};
+                string exprStr = expression.Substring(index);
+                if (isGroup)
+                {
+                    var d = 0;
+                    for (var i = index + 1; i < expression.Length; i++)
+                    {
+                        var c = expression[i];
+                        if (c == '{')
+                        {
+                            d++;
+                        }
+                        if (c == '}')
+                        {
+                            d--;
+                        }
+
+                        if (d == 0)
+                        {
+                            exprStr = expression.Substring(index, index - i);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    
+                }
+
+                var expr = new Expr
+                {
+                    Expression = exprStr,
+                    Root = rootExpr,
+                    Index = index,
+                };
+
+                rootExpr.SubExpressions = rootExpr.SubExpressions ?? new Expr[0];
+                rootExpr.SubExpressions = rootExpr.SubExpressions.Concat(new[] { expr }).ToArray();
+
+                if (isGroup)
+                {
+                    expr.SubExpressions = EnumerateExpressionParts(expr.Expression, expr).ToArray();
+                }
+
+                yield return expr;
+
+                var nextIndexMargin = exprStr.Substring(index).Length - exprStr.Substring(index).TrimStart('$').Length + 1;
+                index = expression.IndexOf("$", index + nextIndexMargin);
+            }
         }
 
 
@@ -56,6 +123,10 @@ namespace Reportz.Scripting.Classes
                 return expression;
             if (expression.IndexOf('$') < 0)
                 return expression;
+
+            var resultParts = new List<object>();
+            string str = expression;
+
 
             var words = expression.Split(' ').ToArray();
             for (var i = 0; i < words.Length; i++)
@@ -72,15 +143,43 @@ namespace Reportz.Scripting.Classes
 
                     var key = word;
                     object value = EvaluateObject(key);
-                    
+                    resultParts.Add(value);
+
                     word = value?.ToString();
                     words[i] = word;
                 }
             }
+            str = string.Join(" ", words);
+                
 
-            var result = words.All(x => x == null)
-                ? null
-                : string.Join(" ", words);
+            //IEnumerator<Expr> enumerator;
+            //do
+            //{
+            //    enumerator = EnumerateExpressionParts(str).GetEnumerator();
+            //    if (enumerator.MoveNext())
+            //    {
+            //        var expr = enumerator.Current;
+            //        var val = EvaluateObject(expr.Expression);
+
+            //        if (expr.SubExpressions != null && expr.SubExpressions.Any())
+            //        {
+
+            //        }
+
+            //        resultParts.Add(val);
+
+            //        var a = str.Substring(0, expr.Index);
+            //        var b = str.Substring(expr.Index);
+            //        str = a + val + b;
+            //    }
+            //} while (enumerator.Current != null);
+
+            var result = resultParts.Count == 1
+                ? resultParts.Single()
+                : (resultParts.All(x => x == null)
+                    ? null
+                    : str
+                    );
             return result;
         }
 
@@ -154,6 +253,8 @@ namespace Reportz.Scripting.Classes
 
         public class Expr
         {
+            public Expr Root { get; set; }
+            public int Index { get; set; }
             public object Value { get; set; }
             public string Expression { get; set; }
             public Expr[] SubExpressions { get; set; }

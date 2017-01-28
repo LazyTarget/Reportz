@@ -63,5 +63,42 @@ namespace Reportz.Tests.ScriptingTests
         }
 
 
+        [Test]
+        public void SingleWrappedInterpolatedExpression_SystemKey_DateTime()
+        {
+            var sut = new ExpressionEvaluator();
+            object expected = $"Current day is: {DateTime.Today}";
+            object actual = sut.EvaluateExpression("Current day is: ${$$today}");
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void SingleWrappedInterpolatedExpression_SystemKey_Null()
+        {
+            var sut = new ExpressionEvaluator();
+            object expected = $"Current day is: {null}";
+            object actual = sut.EvaluateExpression("Current day is: ${$$null}");
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void SingleWrappedInterpolatedExpression_SystemKey_Empty()
+        {
+            var sut = new ExpressionEvaluator();
+            object expected = $"Current day is: {string.Empty}";
+            object actual = sut.EvaluateExpression("Current day is: ${$$empty}");
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void MultipleWrappedInterpolatedExpression_SystemKey_Empty()
+        {
+            var sut = new ExpressionEvaluator();
+            object expected = $"Current day is: {string.Empty}";
+            object actual = sut.EvaluateExpression("Current day is: ${$$empty}, this statement is: ${$$true}. Or is it ${$$false}?");
+            Assert.AreEqual(expected, actual);
+        }
+
+
     }
 }
