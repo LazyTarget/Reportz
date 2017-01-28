@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
+using Reportz.Scripting.Attributes;
 using Reportz.Scripting.Commands;
 using Reportz.Scripting.Interfaces;
-using Reportz.Scripting.Xml;
 
 namespace Reportz.Scripting.Classes
 {
-    public class ScriptParser : IXInstantiator
+    public class ScriptParser : IScriptParser
     {
         private readonly Lux.Serialization.Xml.XmlSettings _xmlSettings = new Lux.Serialization.Xml.XmlSettings();
         //private readonly Lux.Interfaces.ITypeInstantiator _typeInstantiator = new Lux.TypeInstantiator();
@@ -27,16 +25,32 @@ namespace Reportz.Scripting.Classes
             _xmlSettings = new Lux.Serialization.Xml.XmlSettings();
 
             _knownTypes = new SortedDictionary<string, Type>();
+
+            // defaults
             _knownTypes["script"] = typeof (Script);
             _knownTypes["variable"] = typeof(Variable);
             _knownTypes["event"] = typeof(Event);
             _knownTypes["alert"] = typeof(AlertCommand);
             _knownTypes["run-executable"] = typeof(RunExecutableCommand);
             _knownTypes["invoke-method"] = typeof(InvokeMethodCommand);
-
             _knownTypes["events"] = typeof(EventCollection);
             _knownTypes["arguments"] = typeof(ArgCollection);
             _knownTypes["list"] = typeof(ArgCollection);
+
+            // reflection
+            var types = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(x => x.GetTypes())
+                .Where(x => typeof (IScriptElement).IsAssignableFrom(x) && x.IsClass)
+                .ToArray();
+            foreach (var type in types)
+            {
+                var scriptElementAttrs = type.GetCustomAttributes<ScriptElementAliasAttribute>(inherit: false).ToArray();
+                if (scriptElementAttrs.Any())
+                {
+                    foreach (var attr in scriptElementAttrs)
+                        _knownTypes[attr.Alias] = type;
+                }
+            }
         }
 
 
@@ -150,10 +164,10 @@ namespace Reportz.Scripting.Classes
                 }
                 else if (type != null)
                 {
-                    if (typeof (IXConfigurable).IsAssignableFrom(type))
+                    if (typeof (IScriptElement).IsAssignableFrom(type))
                     {
                         var instance = _xmlSettings.TypeInstantiator.Instantiate(type, arguments?.ToArray());
-                        var configurable = (IXConfigurable) instance;
+                        var configurable = (IScriptElement) instance;
                         configurable.Configure(this, element);
                         value = configurable;
                     }

@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Reportz.Scripting.Attributes;
 using Reportz.Scripting.Interfaces;
-using Reportz.Scripting.Xml;
 
 namespace Reportz.Scripting.Classes
 {
-    public class Event : IEvent, IXConfigurable
+    [ScriptElementAlias("event")]
+    public class Event : IEvent, IScriptElement
     {
         private IExecutableEnvironment _execute;
 
@@ -24,7 +25,7 @@ namespace Reportz.Scripting.Classes
             return result;
         }
 
-        public void Configure(IXInstantiator instantiator, XElement element)
+        public void Configure(IScriptParser parser, XElement element)
         {
             Key = element.Attribute("key")?.Value;
 
@@ -32,7 +33,7 @@ namespace Reportz.Scripting.Classes
             if (executeElem != null)
             {
                 var exe = new ExecutableEnvironment();
-                exe.Configure(instantiator, executeElem);
+                exe.Configure(parser, executeElem);
                 _execute = exe;
             }
         }

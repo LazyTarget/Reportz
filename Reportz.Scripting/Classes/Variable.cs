@@ -4,23 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Reportz.Scripting.Attributes;
 using Reportz.Scripting.Interfaces;
-using Reportz.Scripting.Xml;
 
 namespace Reportz.Scripting.Classes
 {
-    //public class Variable : IVariable
-    //{
-    //    private Type _explicitType;
-
-    //    public string Key { get; set; }
-    //    public object Value { get; set; }
-    //    public Type Type => _explicitType ?? Value?.GetType();
-    //}
-
-    public class Variable : IVariable, IExecutable, IXConfigurable, ICloneable
+    [ScriptElementAlias("var")]
+    [ScriptElementAlias("variable")]
+    public class Variable : IVariable, IExecutable, IScriptElement, ICloneable
     {
-        private IXInstantiator _instantiator;
+        private IScriptParser _instantiator;
         private Type _explicitType;
         private bool? _instantiated;
         private XElement _element;
@@ -142,10 +135,10 @@ namespace Reportz.Scripting.Classes
             return result;
         }
 
-        public void Configure(IXInstantiator instantiator, XElement element)
+        public void Configure(IScriptParser parser, XElement element)
         {
             _element = element;
-            _instantiator = instantiator;
+            _instantiator = parser;
             
             Key = element.Attribute("key")?.Value;
             Value = element.Attribute("value")?.Value;
@@ -164,7 +157,7 @@ namespace Reportz.Scripting.Classes
                 else if (element.Attribute("value") == null && element.HasElements)
                 {
                     var rootChild = element.Elements().FirstOrDefault();
-                    Value = instantiator.InstantiateElement(rootChild);
+                    Value = parser.InstantiateElement(rootChild);
                 }
             }
             

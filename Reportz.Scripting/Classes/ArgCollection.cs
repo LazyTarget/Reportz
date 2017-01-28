@@ -2,15 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
+using Reportz.Scripting.Attributes;
 using Reportz.Scripting.Interfaces;
-using Reportz.Scripting.Xml;
 
 namespace Reportz.Scripting.Classes
 {
-    public class ArgCollection : IEnumerable<IVariable>, IXConfigurable
+    [ScriptElementAlias("arguments")]
+    //[ScriptElement("list")]
+    public class ArgCollection : IEnumerable<IVariable>, IScriptElement
     {
 #if DEBUG
         public readonly IDictionary<string, IVariable> _vars;
@@ -18,7 +18,7 @@ namespace Reportz.Scripting.Classes
         private readonly IDictionary<string, IVariable> _vars;
 #endif
 
-        private IXInstantiator _instantiator;
+        private IScriptParser _instantiator;
         private XElement _element;
 
 
@@ -38,9 +38,9 @@ namespace Reportz.Scripting.Classes
             return GetEnumerator();
         }
 
-        public void Configure(IXInstantiator instantiator, XElement element)
+        public void Configure(IScriptParser parser, XElement element)
         {
-            _instantiator = instantiator;
+            _instantiator = parser;
             _element = element;
 
 
@@ -65,7 +65,7 @@ namespace Reportz.Scripting.Classes
                         childElem.Name = "variable";
 
                     var key = childElem.Attribute("key")?.Value;
-                    var obj = instantiator.InstantiateElement(childElem);
+                    var obj = parser.InstantiateElement(childElem);
 
                     var variable = obj as IVariable;
                     key = variable?.Key ?? key ?? _vars.Count.ToString();
@@ -87,7 +87,7 @@ namespace Reportz.Scripting.Classes
                 else if (childName == "remove")
                 {
                     childElem.Name = "variable";
-                    var obj = instantiator.InstantiateElement(childElem);
+                    var obj = parser.InstantiateElement(childElem);
                     var e = (IVariable)obj;
                     var r = _vars.Remove(e.Key);
                 }

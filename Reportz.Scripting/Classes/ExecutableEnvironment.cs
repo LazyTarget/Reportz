@@ -5,11 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Reportz.Scripting.Interfaces;
-using Reportz.Scripting.Xml;
 
 namespace Reportz.Scripting.Classes
 {
-    public class ExecutableEnvironment : IExecutableEnvironment, IXConfigurable
+    public class ExecutableEnvironment : IExecutableEnvironment, IScriptElement
     {
 #if DEBUG
         public readonly IList<object> _elements = new List<object>();
@@ -59,12 +58,12 @@ namespace Reportz.Scripting.Classes
             return result;
         }
 
-        public void Configure(IXInstantiator instantiator, XElement element)
+        public void Configure(IScriptParser parser, XElement element)
         {
             var children = element.Elements();
             foreach (var child in children)
             {
-                var obj = instantiator.InstantiateElement(child);
+                var obj = parser.InstantiateElement(child);
                 _elements.Add(obj);
             }
         }

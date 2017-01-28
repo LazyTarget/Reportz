@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Reportz.Scripting.Attributes;
 using Reportz.Scripting.Interfaces;
-using Reportz.Scripting.Xml;
 
 namespace Reportz.Scripting.Classes
 {
-    public class EventCollection : IEnumerable<IEvent>, IXConfigurable
+    [ScriptElementAlias("events")]
+    public class EventCollection : IEnumerable<IEvent>, IScriptElement
     {
 #if DEBUG
         public readonly IDictionary<string, IEvent> _events;
@@ -33,7 +34,7 @@ namespace Reportz.Scripting.Classes
             return GetEnumerator();
         }
 
-        public void Configure(IXInstantiator instantiator, XElement element)
+        public void Configure(IScriptParser parser, XElement element)
         {
             _events.Clear();
 
@@ -46,13 +47,13 @@ namespace Reportz.Scripting.Classes
                     childName == "item")
                 {
                     var e = new Event();
-                    e.Configure(instantiator, child);
+                    e.Configure(parser, child);
                     _events[e.Key] = e;
                 }
                 else if (childName == "remove")
                 {
                     var e = new Event();
-                    e.Configure(instantiator, child);
+                    e.Configure(parser, child);
                     var r = _events.Remove(e.Key);
                 }
                 else

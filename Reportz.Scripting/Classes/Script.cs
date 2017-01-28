@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Reportz.Scripting.Attributes;
 using Reportz.Scripting.Interfaces;
-using Reportz.Scripting.Xml;
 
 namespace Reportz.Scripting.Classes
 {
-    public class Script : IScript, IXConfigurable
+    [ScriptElementAlias("script")]
+    public class Script : IScript, IScriptElement
     {
         private IExecutableEnvironment _execute;
         private EventCollection _eventsCollection;
@@ -27,7 +28,7 @@ namespace Reportz.Scripting.Classes
             return result;
         }
 
-        public void Configure(IXInstantiator instantiator, XElement element)
+        public void Configure(IScriptParser parser, XElement element)
         {
             Name = element.Attribute("name")?.Value;
 
@@ -35,7 +36,7 @@ namespace Reportz.Scripting.Classes
             if (executeElem != null)
             {
                 var exe = new ExecutableEnvironment();
-                exe.Configure(instantiator, executeElem);
+                exe.Configure(parser, executeElem);
                 _execute = exe;
             }
 
@@ -43,7 +44,7 @@ namespace Reportz.Scripting.Classes
             if (eventsElem != null)
             {
                 var events = new EventCollection();
-                events.Configure(instantiator, eventsElem);
+                events.Configure(parser, eventsElem);
                 _eventsCollection = events;
             }
         }

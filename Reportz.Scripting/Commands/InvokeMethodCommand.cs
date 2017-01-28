@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+using Reportz.Scripting.Attributes;
 using Reportz.Scripting.Classes;
 using Reportz.Scripting.Interfaces;
-using Reportz.Scripting.Xml;
 
 namespace Reportz.Scripting.Commands
 {
-    public class InvokeMethodCommand : IExecutable, IXConfigurable, IHasEvents
+    [ScriptElementAlias("invoke-method")]
+    public class InvokeMethodCommand : IExecutable, IScriptElement, IHasEvents
     {
-        private IXInstantiator _instantiator;
+        private IScriptParser _instantiator;
         private XElement _element;
         private ArgCollection _argsCollection;
         private EventCollection _eventsCollection;
@@ -163,16 +164,16 @@ namespace Reportz.Scripting.Commands
             }
         }
 
-        public void Configure(IXInstantiator instantiator, XElement element)
+        public void Configure(IScriptParser parser, XElement element)
         {
-            _instantiator = instantiator;
+            _instantiator = parser;
             _element = element;
 
             var argsElem = element.Element("arguments");
             if (argsElem != null)
             {
                 var arg = new ArgCollection();
-                arg.Configure(instantiator, argsElem);
+                arg.Configure(parser, argsElem);
                 _argsCollection = arg;
             }
 
@@ -180,7 +181,7 @@ namespace Reportz.Scripting.Commands
             if (eventsElem != null)
             {
                 var events = new EventCollection();
-                events.Configure(instantiator, eventsElem);
+                events.Configure(parser, eventsElem);
                 _eventsCollection = events;
             }
         }

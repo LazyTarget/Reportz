@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\ScriptElementAliasAttribute.cs" />
     <Compile Include="Classes\ArgCollection.cs" />
     <Compile Include="Classes\Event.cs" />
     <Compile Include="Classes\EventCollection.cs" />
@@ -75,11 +76,14 @@
     <Compile Include="Interfaces\IExpressionEvaluator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptExtensions.cs" />
-    <Compile Include="Xml\IXConfigurable.cs" />
-    <Compile Include="Xml\IXInstantiator.cs" />
+    <Compile Include="Interfaces\IScriptElement.cs" />
+    <Compile Include="Interfaces\IScriptParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Xml\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

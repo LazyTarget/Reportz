@@ -4,15 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Reportz.Scripting.Attributes;
 using Reportz.Scripting.Classes;
 using Reportz.Scripting.Interfaces;
-using Reportz.Scripting.Xml;
 
 namespace Reportz.Scripting.Commands
 {
-    public class AlertCommand : IExecutable, IXConfigurable
+    [ScriptElementAlias("alert")]
+    public class AlertCommand : IExecutable, IScriptElement
     {
-        private IXInstantiator _instantiator;
+        private IScriptParser _instantiator;
         private string _message;
 
         public AlertCommand()
@@ -34,9 +35,9 @@ namespace Reportz.Scripting.Commands
             return result;
         }
 
-        public void Configure(IXInstantiator instantiator, XElement element)
+        public void Configure(IScriptParser parser, XElement element)
         {
-            _instantiator = instantiator;
+            _instantiator = parser;
             _message = element.Value;
         }
     }
