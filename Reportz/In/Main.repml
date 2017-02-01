@@ -1,18 +1,27 @@
 ﻿<document name="Main">
 
   <scripts>
-    
     <script name="AlertScript">
       <alert>$text</alert>
     </script>
-    
+    <!--<include path="In/TextScript.repml" />-->
   </scripts>
   
 	<execute>
+    <alert>Text: $text</alert>
+    
+    <include path="In/TextScript.repml" />
     
     <execute-script name="AlertScript">
       <arguments>
-        <add key="text">This is the script beginning...</add>
+        <add key="text">This is invoked from the 'Main' script...</add>
+      </arguments>
+      <events></events>
+    </execute-script>
+    
+    <execute-script name="ProjectPlace">
+      <arguments>
+        <add key="text">This is a parameter that has been passed to the 'ProjectPlace' script (from 'Main')</add>
       </arguments>
       <events></events>
     </execute-script>

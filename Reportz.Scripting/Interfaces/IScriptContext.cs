@@ -3,5 +3,6 @@
     public interface IScriptContext
     {
         IScriptScope ScriptScope { get; }
+        Lux.IO.IFileSystem FileSystem { get; }
     }
 }

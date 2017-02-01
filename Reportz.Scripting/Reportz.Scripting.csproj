@@ -69,6 +69,7 @@
     <Compile Include="Classes\Variable.cs" />
     <Compile Include="Classes\VariableScope.cs" />
     <Compile Include="Commands\AlertCommand.cs" />
+    <Compile Include="Commands\LoadScriptFileCommand.cs" />
     <Compile Include="Commands\IfCommand.cs" />
     <Compile Include="Commands\ExecuteScriptCommand.cs" />
     <Compile Include="Commands\InvokeMethodCommand.cs" />

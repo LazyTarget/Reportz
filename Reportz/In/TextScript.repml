@@ -1,6 +1,8 @@
 ﻿<script name="ProjectPlace">
 
 	<execute>
+    <alert>Text: $text</alert>
+    
 		<variable key="TimeReportExtractor">
 			<instantiate>
 				<type>Reportz.Plugin.ProjectPlace.TimeReportExtractor, Reportz.Plugin.ProjectPlace</type>
