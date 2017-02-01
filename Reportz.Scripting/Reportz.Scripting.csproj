@@ -58,6 +58,8 @@
     <Compile Include="Classes\ExecutableEnvironment.cs" />
     <Compile Include="Classes\ExecutableResult.cs" />
     <Compile Include="Classes\ExpressionEvaluator.cs" />
+    <Compile Include="Classes\ScriptScope.cs" />
+    <Compile Include="Classes\ScriptContext.cs" />
     <Compile Include="Classes\SimpleVariable.cs" />
     <Compile Include="Classes\ScriptDocument.cs" />
     <Compile Include="Classes\Script.cs" />
@@ -77,7 +79,10 @@
     <Compile Include="Interfaces\IExecutableEnvironment.cs" />
     <Compile Include="Interfaces\IExecutableResult.cs" />
     <Compile Include="Interfaces\IHasArguments.cs" />
+    <Compile Include="Interfaces\IHasScriptContext.cs" />
     <Compile Include="Interfaces\IHasEvents.cs" />
+    <Compile Include="Interfaces\IScriptScope.cs" />
+    <Compile Include="Interfaces\IScriptContext.cs" />
     <Compile Include="Interfaces\IScriptDocument.cs" />
     <Compile Include="Interfaces\IScript.cs" />
     <Compile Include="Interfaces\IVariable.cs" />

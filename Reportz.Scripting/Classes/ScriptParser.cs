@@ -20,6 +20,9 @@ namespace Reportz.Scripting.Classes
         private readonly IDictionary<string, Type> _knownTypes;
 #endif
 
+        private IScriptContext _scriptContext;
+
+
         public ScriptParser()
         {
             _xmlSettings = new Lux.Serialization.Xml.XmlSettings();
@@ -51,6 +54,8 @@ namespace Reportz.Scripting.Classes
                         _knownTypes[attr.Alias] = type;
                 }
             }
+
+            _scriptContext = new ScriptContext();
         }
 
 
@@ -75,22 +80,26 @@ namespace Reportz.Scripting.Classes
                 }
                 else if (obj is IEnumerable<IScript>)
                 {
-                    //var xDoc = new XElement("document");
-                    //var xScripts = new XElement("scripts");
-                    //xScripts.Add(xmlDoc.Root);
-                    //xDoc.Add(xScripts);
-
-                    //var doc = new ScriptDocument();
-                    //doc.Configure(this, xDoc);
-                    //result = doc;
-
                     var scripts = (IEnumerable<IScript>) obj;
-                    result = new ScriptDocument(scripts);
+                    foreach (var script in scripts)
+                    {
+                        _scriptContext.ScriptScope.AppendScript(script);
+                    }
+
+                    result = new ScriptDocument
+                    {
+                        Context = _scriptContext,
+                    };
                 }
                 else if (obj is IScript)
                 {
                     var script = (IScript) obj;
-                    result = new ScriptDocument(new IScript[] {script});
+                    _scriptContext.ScriptScope.AppendScript(script);
+
+                    result = new ScriptDocument
+                    {
+                        Context = _scriptContext,
+                    };
                 }
                 else
                 {
@@ -189,6 +198,8 @@ namespace Reportz.Scripting.Classes
                     if (typeof (IScriptElement).IsAssignableFrom(type))
                     {
                         var instance = _xmlSettings.TypeInstantiator.Instantiate(type, arguments?.ToArray());
+                        _AttachInternal(instance);
+
                         var configurable = (IScriptElement) instance;
                         configurable.Configure(this, element);
                         value = configurable;
@@ -196,11 +207,13 @@ namespace Reportz.Scripting.Classes
                     else if (!type.IsPrimitive && type != typeof (string) && !type.IsValueType)
                     {
                         var temp = _xmlSettings.TypeInstantiator.Instantiate(type, arguments?.ToArray());
+                        _AttachInternal(temp);
                         value = temp;
                     }
                     else
                     {
                         value = _xmlSettings.Converter.Convert(elementValue, type);
+                        _AttachInternal(value);
                     }
 
 
@@ -215,6 +228,7 @@ namespace Reportz.Scripting.Classes
                                 try
                                 {
                                     val = _xmlSettings.Converter.Convert(val, propInfo.PropertyType);
+                                    _AttachInternal(val);
                                     propInfo.SetValue(value, val);
                                 }
                                 catch (Exception ex)
@@ -239,6 +253,15 @@ namespace Reportz.Scripting.Classes
             {
                 //_log.Error($"Error when instantiating obj", ex);
                 throw;
+            }
+        }
+
+        protected internal virtual void _AttachInternal(object obj)
+        {
+            if (obj is IHasScriptContext)
+            {
+                var hasScriptContext = (IHasScriptContext) obj;
+                hasScriptContext.Context = _scriptContext;
             }
         }
 

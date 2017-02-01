@@ -8,41 +8,23 @@ using Reportz.Scripting.Interfaces;
 namespace Reportz.Scripting.Classes
 {
     [ScriptElementAlias("document")]
-    public class ScriptDocument : IScriptDocument, IScriptElement
+    public class ScriptDocument : IScriptDocument, IScriptElement, IHasScriptContext
     {
         private IScriptParser _parser;
         private XElement _element;
         private IExecutableEnvironment _execute;
         private EventCollection _eventsCollection;
-        private readonly IList<IScript> _scripts;
 
         public ScriptDocument()
         {
-            _scripts = new List<IScript>();
-        }
 
-        public ScriptDocument(IEnumerable<IScript> scripts)
-            : this()
-        {
-            if (scripts == null)
-                throw new ArgumentNullException(nameof(scripts));
-            foreach (var script in scripts)
-            {
-                _scripts.Add(script);
-            }
         }
 
         public string Name { get; private set; }
         public IReadOnlyDictionary<string, IEvent> Events { get; private set; }
-
-        public IEnumerable<IScript> Scripts => _scripts;
-
-
-        public IScript GetScript(string scriptName)
-        {
-            var script = _scripts?.FirstOrDefault(x => x.Name == scriptName);
-            return script;
-        }
+        
+        public IScriptContext Context { get; set; }
+        
 
         public IExecutableResult Execute(IExecutableArgs args)
         {
@@ -51,6 +33,7 @@ namespace Reportz.Scripting.Classes
             args = args ?? new ExecutableArgs { Scope = new VariableScope() };
             
             // Global variables
+            args.Scope.CreateLazyVariable("$$Context", () => Context);
             args.Scope.CreateSimpleVariable("$$Document", this);
             args.Scope.CreateSimpleVariable("$$Parser", _parser);
 
@@ -68,8 +51,6 @@ namespace Reportz.Scripting.Classes
             var scriptsElem = element?.Element("scripts") ?? element;
             if (scriptsElem != null)
             {
-                _scripts.Clear();
-
                 var scriptElements = scriptsElem.Elements("script");
                 foreach (var scriptElement in scriptElements)
                 {
@@ -77,7 +58,7 @@ namespace Reportz.Scripting.Classes
                     var script = obj as IScript;
                     if (script == null)
                         continue;
-                    _scripts.Add(script);
+                    Context?.ScriptScope?.AppendScript(script);
                 }
             }
 

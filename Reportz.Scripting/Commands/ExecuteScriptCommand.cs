@@ -31,13 +31,13 @@ namespace Reportz.Scripting.Commands
             args = args ?? new ExecutableArgs { Scope = new VariableScope() };
             try
             {
-                var document = args?.Scope.GetScriptDocument();
+                var ctx = args?.Scope.GetScriptContext();
                 var scriptName = args?.Arguments?.FirstOrDefault(x => x.Key == "scriptName")?.Value?.ToString();
                 scriptName     = scriptName ?? ScriptName;
                 if (string.IsNullOrWhiteSpace(scriptName))
                     throw new Exception($"Invalid script name.");
 
-                var script = document?.GetScript(scriptName);
+                var script = ctx?.ScriptScope?.GetScript(scriptName);
                 if (script == null)
                     throw new Exception($"Could not get script '{scriptName}'. ");
 

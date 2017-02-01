@@ -41,6 +41,13 @@ namespace Reportz.Scripting
 
 
 
+        public static IScriptContext GetScriptContext(this VariableScope scope)
+        {
+            var obj = scope.GetVariable("$$Context")?.Value;
+            var ctx = obj as IScriptContext;
+            return ctx;
+        }
+
         public static IScriptDocument GetScriptDocument(this VariableScope scope)
         {
             var obj = scope.GetVariable("$$Document")?.Value;
