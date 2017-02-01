@@ -61,19 +61,41 @@ namespace Reportz.Scripting.Classes
         }
 
 
-        public IScript Parse(string text)
+        public IScriptDocument ParseDocument(string text)
         {
             try
             {
-                var doc = XDocument.Parse(text);
-                var obj = InstantiateElement(doc.Root);
+                var xmlDoc = XDocument.Parse(text);
+                var obj = InstantiateElement(xmlDoc.Root);
 
-                IScript result;
-                var scriptCollection = obj as IEnumerable<IScript>;
-                if (scriptCollection != null)
-                    result = scriptCollection.FirstOrDefault();
+                IScriptDocument result;
+                if (obj is IScriptDocument)
+                {
+                    result = (IScriptDocument) obj;
+                }
+                else if (obj is IEnumerable<IScript>)
+                {
+                    //var xDoc = new XElement("document");
+                    //var xScripts = new XElement("scripts");
+                    //xScripts.Add(xmlDoc.Root);
+                    //xDoc.Add(xScripts);
+
+                    //var doc = new ScriptDocument();
+                    //doc.Configure(this, xDoc);
+                    //result = doc;
+
+                    var scripts = (IEnumerable<IScript>) obj;
+                    result = new ScriptDocument(scripts);
+                }
+                else if (obj is IScript)
+                {
+                    var script = (IScript) obj;
+                    result = new ScriptDocument(new IScript[] {script});
+                }
                 else
-                    result = obj as IScript;
+                {
+                    throw new InvalidOperationException();
+                }
                 return result;
             }
             catch (Exception ex)
@@ -147,7 +169,7 @@ namespace Reportz.Scripting.Classes
                 }
                 else
                 {
-
+                    throw new InvalidOperationException($"Could not identify ScriptElement '{elementName}'");
                 }
 
 

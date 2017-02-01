@@ -47,6 +47,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="In\Main.repml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="In\TextScript.repml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

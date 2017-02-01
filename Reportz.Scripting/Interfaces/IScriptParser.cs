@@ -6,6 +6,8 @@ namespace Reportz.Scripting.Interfaces
 {
     public interface IScriptParser
     {
+        IScriptDocument ParseDocument(string text);
+
         object InstantiateElement(XElement element);
 
         object EvaluateExpression(VariableScope scope, string expression);

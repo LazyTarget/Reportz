@@ -1,0 +1,23 @@
+﻿<document name="Main">
+
+  <scripts>
+    
+    <script name="AlertScript">
+      <alert>$text</alert>
+    </script>
+    
+  </scripts>
+  
+	<execute>
+    
+    <execute-script name="AlertScript">
+      <arguments>
+        <add key="text">This is the script beginning...</add>
+      </arguments>
+      <events></events>
+    </execute-script>
+    
+	</execute>
+  
+	<events></events>
+</document>

@@ -1,4 +1,6 @@
+using System;
 using Reportz.Scripting.Classes;
+using Reportz.Scripting.Interfaces;
 
 namespace Reportz.Scripting
 {
@@ -20,6 +22,30 @@ namespace Reportz.Scripting
                 return obj;
             }
             return default(T);
+        }
+
+
+        public static IVariable CreateSimpleVariable(this VariableScope scope, string key, object value)
+        {
+            var variable = new SimpleVariable(key, value);
+            scope.SetVariable(variable);
+            return variable;
+        }
+
+        public static IVariable CreateLazyVariable(this VariableScope scope, string key, Func<object> func)
+        {
+            var variable = new LazyVariable(key, func);
+            scope.SetVariable(variable);
+            return variable;
+        }
+
+
+
+        public static IScriptDocument GetScriptDocument(this VariableScope scope)
+        {
+            var obj = scope.GetVariable("$$Document")?.Value;
+            var doc = obj as IScriptDocument;
+            return doc;
         }
     }
 }

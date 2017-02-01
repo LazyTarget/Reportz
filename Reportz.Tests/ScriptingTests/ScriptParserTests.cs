@@ -42,12 +42,12 @@ namespace Reportz.Tests.ScriptingTests
 </script>
 ";
             var scriptParser = new ScriptParser();
-            var script = scriptParser.Parse(scriptXml);
+            var scriptDoc = scriptParser.ParseDocument(scriptXml);
 
             var args = new ExecutableArgs();
             args.Scope = new VariableScope();
 
-            var result = script.Execute(args);
+            var result = scriptDoc.Execute(args);
             
             
             // Assert

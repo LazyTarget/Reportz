@@ -112,7 +112,8 @@ namespace Reportz.Scripting.Classes
 
 
             int depth;
-            var rootRaw = _element?.Attribute("depth")?.Value;
+            var rootRaw = args.Arguments?.FirstOrDefault(x => x.Key == "depth")?.Value?.ToString();
+            rootRaw     = rootRaw ?? _element?.Attribute("depth")?.Value;
             int.TryParse(rootRaw, out depth);
 
             if (rootRaw == "root")

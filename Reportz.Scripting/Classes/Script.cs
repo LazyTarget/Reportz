@@ -32,7 +32,7 @@ namespace Reportz.Scripting.Classes
         {
             Name = element.Attribute("name")?.Value;
 
-            var executeElem = element.Element("execute");
+            var executeElem = element.Element("execute") ?? element;
             if (executeElem != null)
             {
                 var exe = new ExecutableEnvironment();

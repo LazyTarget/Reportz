@@ -22,13 +22,13 @@ namespace Reportz
             var text = File.ReadAllText(scriptFile);
 
             var scriptFactory = new ScriptParser();
-            var script = scriptFactory.Parse(text);
+            var scriptDoc = scriptFactory.ParseDocument(text);
 
-            Console.WriteLine("Executing script...");
+            Console.WriteLine("Executing script doc...");
             Console.WriteLine();
 
             IExecutableArgs arg = null;
-            var result = script.Execute(arg);
+            var result = scriptDoc.Execute(arg);
 
             Console.WriteLine();
             Console.WriteLine("::ExecutableResult:: ");
