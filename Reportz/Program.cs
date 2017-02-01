@@ -28,6 +28,7 @@ namespace Reportz
             Console.WriteLine();
 
             IExecutableArgs arg = null;
+            arg = arg ?? new ExecutableArgs { Scope = new VariableScope() };
             var result = scriptDoc.Execute(arg);
 
             Console.WriteLine();

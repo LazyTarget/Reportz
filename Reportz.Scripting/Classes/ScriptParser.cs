@@ -157,11 +157,30 @@ namespace Reportz.Scripting.Classes
                         var propChildren = propsElem.Elements();
                         foreach (var child in propChildren)
                         {
-                            var propVal = InstantiateElement(child);
+                            child.Name = "variable";        // todo: improve, use ArgCollection...
+
+                            var el = InstantiateElement(child);
+                            var var = el as IVariable;
+                            var propVal = var?.Value ?? el;
                             var key = child.Attribute("key")?.Value;
                             var prop = new Tuple<string, object>(key, propVal);
                             properties.Add(prop);
                         }
+
+                        //var argColl = new ArgCollection();
+                        //argColl.Configure(this, propsElem);
+                        //
+                        //foreach (var v in argColl._vars)
+                        //{
+                        //    var a = new ExecutableArgs
+                        //    {
+                        //        Scope = 
+                        //        Arguments = null,
+                        //    };
+                        //
+                        //    var prop = new Tuple<string, object>(v.Key, v.Value?.Value);
+                        //    properties.Add(prop);
+                        //}
                     }
                 }
                 else if (_knownTypes.TryGetValue(elementName, out type))

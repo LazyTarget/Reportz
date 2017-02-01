@@ -9,8 +9,9 @@
   
 	<execute>
     <alert>Text: $text</alert>
-    
-    <include path="In/TextScript.repml" />
+
+    <include path="In/Utils.repml" />
+    <include path="In/ProjectPlace.repml" />
     
     <execute-script name="AlertScript">
       <arguments>
@@ -19,6 +20,15 @@
       <events></events>
     </execute-script>
     
+    <execute-script name="ExtractTimeReportAsJson">
+      <arguments>
+        <add key="text">This is a parameter that has been passed to the 'ExtractTimeReportAsJson' script (from 'Main')</add>
+        <add key="username">Bill.Gates@microsoft.com</add>
+        <add key="password">AppleSux!</add>
+      </arguments>
+      <events></events>
+    </execute-script>
+
     <execute-script name="ProjectPlace">
       <arguments>
         <add key="text">This is a parameter that has been passed to the 'ProjectPlace' script (from 'Main')</add>

@@ -1,0 +1,269 @@
+﻿<document name="ProjectPlace">
+  <scripts>
+    
+    <script name="ExtractTimeReportAsJson">
+      
+      <!-- todo: define default arguments? -->
+      <!--<arguments>
+        <add key="Username" var="username" type="string"></add>
+        <add key="Password" var="password" type="string"></add>
+        <add key="Url" var="url" type="string"></add>
+      </arguments>-->
+      
+	    <execute>
+        <alert>Text: $text</alert>
+        
+		    <variable key="TimeReportExtractor">
+			    <instantiate>
+				    <type>Reportz.Plugin.ProjectPlace.TimeReportExtractor, Reportz.Plugin.ProjectPlace</type>
+				    <ctor>
+					    <arguments>
+					    </arguments>
+				    </ctor>
+				    <properties>
+					    <!--<add key="Username" var="username" type="string"></add>-->
+              <!--<add key="Password" var="password" type="string"></add>-->
+              <add key="Username" var="username" type="string">$username</add>
+              <add key="Password" var="password" type="string">$password</add>
+              <add key="Url" var="url" type="string">some url...</add>
+				    </properties>
+			    </instantiate>
+		    </variable>
+    
+		    <variable key="startDate" type="DateTime">2017-01-01</variable>
+        <variable key="endDate" type="DateTime">2017-01-15</variable>
+        <variable key="jsonFilePath" type="string">Out/TimeReportJson_20170101-20170115.json</variable>
+        <!--<variable key="jsonFilePath" type="string" eval="true">TimeReportJson_${$startDate}-${$endDate}</variable>-->
+
+    
+    
+        <run-executable key="TimeReportExtractor">
+          <arguments>
+            <add key="startDate" var="startDate" type="DateTime" />
+            <add key="endDate" var="endDate" type="DateTime" />
+          </arguments>
+          <events>
+            <event key="error">
+              <alert>Something went wrong!! Error message: $$Exception.Message</alert>
+            </event>
+            <event key="complete">
+              <variable key="json" depth="root">$$Result</variable>
+            </event>
+          </events>
+        </run-executable>
+
+        <!--
+        <invoke-method>
+			    <arguments>
+            <add key="type" value="System.IO.File" />
+				    <add key="method">WriteAllText</add>
+            <add key="arguments">
+              <arguments>
+                <add key="path" var="jsonFilePath" />
+                <add key="contents" var="json" />
+              </arguments>
+            </add>
+			    </arguments>
+			    <events>
+				    <event key="error">
+					    <alert>Something went wrong!! Error message: $$Exception.Message</alert>
+				    </event>
+				    <event key="complete">
+					    <alert>Successfully wrote jsonDataFile at path: $path</alert>
+				    </event>
+			    </events>
+		    </invoke-method>
+        -->
+
+        <execute-script name="Utils.WriteAllText" scriptName="WriteAllText">
+          <arguments>
+            <add key="path" var="jsonFilePath"></add>
+            <add key="contents" var="json"></add>
+          </arguments>
+          <events>
+            <event key="complete">
+              <alert>Successfully wrote jsonDataFile at path: $path</alert>
+            </event>
+          </events>
+        </execute-script>
+	    </execute>
+  
+	    <events>
+		    <event key="error">
+			    <alert>Something went wrong when running script!! Error message: $$Exception.Message</alert>
+		    </event>
+		    <event key="completed">
+          <alert>Completed 'ExtractTimeReportAsJson'</alert>
+        </event>
+	    </events>
+    </script>
+
+    
+    
+    
+    <script name="ProjectPlace">
+      <arguments></arguments>
+      <!-- todo: define default arguments? -->
+
+      <execute>
+        <alert>Text: $text</alert>
+        
+        <variable key="JsonToCsvFormatter">
+          <instantiate>
+            <type>Reportz.Plugin.ProjectPlace.TimeReportJsonToCsvFormatter, Reportz.Plugin.ProjectPlace</type>
+          </instantiate>
+        </variable>
+
+        <variable key="JsonToDataTableFormatter">
+          <instantiate>
+            <type>Reportz.Plugin.ProjectPlace.JsonToDataTableFormatter, Reportz.Plugin.ProjectPlace</type>
+          </instantiate>
+        </variable>
+
+        <variable key="XlsxUpdator">
+          <instantiate>
+            <type>Reportz.Helpers.Excel.XlsxUpdator, Reportz.Helpers.Excel</type>
+          </instantiate>
+        </variable>
+
+        <variable key="startDate" type="DateTime">2017-01-01</variable>
+        <variable key="endDate" type="DateTime">2017-01-15</variable>
+        <variable key="jsonFilePath" type="string">Out/TimeReportJson_20170101-20170115.json</variable>
+        <!--<variable key="jsonFilePath" type="string" eval="true">TimeReportJson_${$startDate}-${$endDate}</variable>-->
+
+
+        <invoke-method>
+          <arguments>
+            <add key="type" value="System.IO.File" />
+            <add key="method">Exists</add>
+            <add key="arguments">
+              <arguments>
+                <add key="path" var="jsonFilePath" />
+              </arguments>
+            </add>
+          </arguments>
+          <events>
+            <event key="complete">
+              <variable key="jsonFileExists" depth="root">$$Result</variable>
+              <alert>JsonDataFile exists: $jsonFileExists</alert>
+            </event>
+          </events>
+        </invoke-method>
+
+
+        <if-group>
+          <if>
+            <conditions>
+              <add>$jsonFileExists</add>
+            </conditions>
+            <execute>
+              <alert>JsonDataFile exists</alert>
+            </execute>
+          </if>
+          <elseIf>
+            <execute>
+              <alert>JsonDataFile doesn't exist!</alert>
+            </execute>
+          </elseIf>
+        </if-group>
+
+
+        <invoke-method>
+          <arguments>
+            <add key="type" value="System.IO.File" />
+            <add key="instance" value="$$null" /><!--Optional if static-->
+            <add key="method">ReadAllText</add>
+            <add key="arguments">
+              <arguments>
+                <add key="path" var="jsonFilePath" type="string" />
+              </arguments>
+            </add>
+          </arguments>
+          <events>
+            <event key="error">
+              <alert>Something went wrong!! Error message: $$Exception.Message</alert>
+            </event>
+            <event key="complete">
+              <variable key="json" depth="root">$$Result</variable>
+            </event>
+          </events>
+        </invoke-method>
+
+        <alert>Json result: $json</alert>
+
+
+        <run-executable key="JsonToCsvFormatter">
+          <arguments>
+            <add key="json" var="json" />
+            <add key="seperator">;</add>
+            <list key="header">
+              <add>artifactTitle</add>
+              <add>reportedDate</add>
+              <add>minutes</add>
+              <add>meta.planletTitle</add>
+            </list>
+          </arguments>
+          <events>
+            <event key="error">
+              <alert>Something went wrong!! Error message: $$Exception.Message</alert>
+            </event>
+            <event key="complete">
+              <!--<variable key="csv" depth="root">$$Result</variable>-->
+              <variable key="csv" var="$$Result" depth="root" />
+            </event>
+          </events>
+        </run-executable>
+
+        <run-executable key="JsonToDataTableFormatter">
+          <arguments>
+            <add key="json" var="json" />
+          </arguments>
+          <events>
+            <event key="error">
+              <alert>Something went wrong!! Error message: $$Exception.Message</alert>
+            </event>
+            <event key="complete">
+              <variable key="dataTable" var="$$Result" depth="root" />
+            </event>
+          </events>
+        </run-executable>
+
+        <alert>Csv result: $csv</alert>
+        <alert>DataTable result: $dataTable</alert>
+
+
+        <run-executable key="XlsxUpdator">
+          <arguments>
+            <add key="data" var="dataTable" />
+            <add key="sheetName" value="Sheet1" />
+            <add key="loadFileName" value="Out/ExcelDoc_Template.xlsx" />
+            <add key="saveFileName" value="Out/ExcelDoc_20170201.xlsx" />
+            <!--<add key="saveFileName" value="Out/ExcelDoc_${$$now}.xlsx" eval="true" />-->
+          </arguments>
+          <events>
+            <event key="error">
+              <alert>Something went wrong!! Error message: $$Exception.Message</alert>
+            </event>
+            <event key="complete">
+              <variable key="dataTable" var="$$Result" depth="root" />
+            </event>
+          </events>
+        </run-executable>
+
+      </execute>
+
+      <events>
+        <event key="error">
+          <alert>Something went wrong when running script!! Error message: $$Exception.Message</alert>
+        </event>
+        <event key="completed">
+
+        </event>
+      </events>
+    </script>
+    
+  </scripts>
+
+  <execute>
+  </execute>
+</document>

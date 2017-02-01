@@ -17,7 +17,7 @@ namespace Reportz.Plugin.ProjectPlace
     {
         public TimeReportExtractor()
         {
-            
+            Url = "https://service.projectplace.com/";
         }
 
         public string Username { get; set; }
@@ -27,6 +27,16 @@ namespace Reportz.Plugin.ProjectPlace
         public IExecutableResult Execute(IExecutableArgs args)
         {
             // do stuff...
+
+            // todo:
+            // ---TEMPORARY---
+            if (Username != null && Username.StartsWith("$"))
+                Username = args.Scope.GetVariable(Username.Substring(1))?.Value?.ToString() ?? Username;
+            if (Password != null && Password.StartsWith("$"))
+                Password = args.Scope.GetVariable(Password.Substring(1))?.Value?.ToString() ?? Password;
+            if (Url != null && Url.StartsWith("$"))
+                Url = args.Scope.GetVariable(Url.Substring(1))?.Value?.ToString() ?? Url;
+            // ---END TEMPORARY---
 
             try
             {

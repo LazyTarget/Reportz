@@ -1,0 +1,73 @@
+﻿<document name="ProjectPlace">
+  <scripts>
+    
+    <script name="FileExists">
+      <execute>
+        <invoke-method>
+          <arguments>
+            <add key="type" value="System.IO.File" />
+            <add key="method">Exists</add>
+            <add key="arguments">
+              <arguments>
+                <add key="path" var="path" />
+              </arguments>
+            </add>
+          </arguments>
+          <events></events>
+        </invoke-method>
+      </execute>
+    </script>
+    
+    <script name="WriteAllText">
+	    <execute>
+        <invoke-method>
+			    <arguments>
+            <add key="type" value="System.IO.File" />
+				    <add key="method">WriteAllText</add>
+            <add key="arguments">
+              <arguments>
+                <add key="path" var="path" />
+                <add key="contents" var="contents" />
+              </arguments>
+            </add>
+			    </arguments>
+			    <events>
+				    <event key="error">
+					    <alert>Something went wrong!! Error message: $$Exception.Message</alert>
+				    </event>
+				    <event key="complete">
+					    <alert>Successfully wrote jsonDataFile at path: $path</alert>
+				    </event>
+			    </events>
+		    </invoke-method>
+	    </execute>
+    </script>
+    
+    <script name="ReadAllText">
+      <execute>
+        <invoke-method>
+          <arguments>
+            <add key="type" value="System.IO.File" />
+            <add key="instance" value="$$null" /><!--Optional if static-->
+            <add key="method">ReadAllText</add>
+            <add key="arguments">
+              <arguments>
+                <add key="path" var="path" />
+              </arguments>
+            </add>
+          </arguments>
+          <events>
+            <event key="error">
+              <alert>Something went wrong!! Error message: $$Exception.Message</alert>
+            </event>
+            <event key="complete">
+              <!--<variable key="contents" depth="root">$$Result</variable>-->
+            </event>
+          </events>
+        </invoke-method>
+      </execute>
+    </script>
+  </scripts>
+  
+  <execute></execute>
+</document>

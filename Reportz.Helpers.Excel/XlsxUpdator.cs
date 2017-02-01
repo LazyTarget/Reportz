@@ -61,7 +61,7 @@ namespace Reportz.Helpers.Excel
                 }
 
                 // todo: apply dataSet to Worksheet
-                object res = null;
+                object res = pkg;
 
                 var result = new ExecutableResult
                 {
