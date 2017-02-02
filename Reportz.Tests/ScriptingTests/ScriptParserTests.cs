@@ -7,7 +7,7 @@ using Reportz.Scripting.Classes;
 namespace Reportz.Tests.ScriptingTests
 {
     [TestFixture]
-    public class ScriptParserTests
+    public partial class ScriptParserTests
     {
         [Test]
         public void ExecuteScriptWithVariables()

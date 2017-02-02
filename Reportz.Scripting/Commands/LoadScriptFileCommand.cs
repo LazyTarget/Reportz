@@ -61,10 +61,7 @@ namespace Reportz.Scripting.Commands
                     }
                 }
 
-                result = new ExecutableResult
-                {
-                    Result = loadedScriptDoc,
-                };
+                result = args.CreateResult(loadedScriptDoc);
                 return result;
             }
             catch (Exception ex)

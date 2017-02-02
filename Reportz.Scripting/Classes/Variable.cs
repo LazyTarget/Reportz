@@ -128,10 +128,7 @@ namespace Reportz.Scripting.Classes
 
             var success = args.Scope?.Parent?.GetVariable(Key) != null &&
                           args.Scope?.Parent?.GetVariable(Key).Value == Value;
-            var result = new ExecutableResult
-            {
-                Result = success,
-            };
+            var result = args.CreateResult(success);
             Executed = true;
             return result;
         }

@@ -54,15 +54,13 @@ namespace Reportz.Scripting.Classes
                 }
             }
 
-            
-            if (resultVar != null)
-            {
-                result = new ExecutableResult
-                {
-                    Result = resultVar.Value,
-                };
-            }
 
+            if (result == null)
+            {
+                result = resultVar != null
+                    ? args.CreateResult(resultVar.Value)
+                    : args.CreateResult();
+            }
             return result;
         }
 

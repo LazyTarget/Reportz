@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using Reportz.Scripting;
 using Reportz.Scripting.Classes;
 using Reportz.Scripting.Interfaces;
 
@@ -35,10 +36,7 @@ namespace Reportz.Plugin.ProjectPlace
                     headerRow[column] = column.ColumnName;
                 }
 
-                var result = new ExecutableResult
-                {
-                    Result = dataTable,
-                };
+                var result = args.CreateResult(dataTable);
                 return result;
             }
             catch (Exception ex)

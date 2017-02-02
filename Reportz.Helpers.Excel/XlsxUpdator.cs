@@ -4,6 +4,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using OfficeOpenXml;
+using Reportz.Scripting;
 using Reportz.Scripting.Classes;
 using Reportz.Scripting.Interfaces;
 
@@ -63,10 +64,7 @@ namespace Reportz.Helpers.Excel
                 // todo: apply dataSet to Worksheet
                 object res = pkg;
 
-                var result = new ExecutableResult
-                {
-                    Result = res,
-                };
+                var result = args.CreateResult(res);
                 return result;
             }
             catch (Exception ex)

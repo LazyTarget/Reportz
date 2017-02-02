@@ -25,6 +25,28 @@ namespace Reportz.Scripting
         }
 
 
+        public static IExecutableResult CreateResult(this IExecutableArgs args)
+        {
+            var res = new ExecutableResult
+            {
+                Args = args,
+                HasResult = false,
+            };
+            return res;
+        }
+
+        public static IExecutableResult CreateResult(this IExecutableArgs args, object result)
+        {
+            var res = new ExecutableResult
+            {
+                Args = args,
+                Result = result,
+                HasResult = true,
+            };
+            return res;
+        }
+
+
         public static IVariable CreateSimpleVariable(this VariableScope scope, string key, object value)
         {
             var variable = new SimpleVariable(key, value);

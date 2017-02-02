@@ -121,11 +121,8 @@ namespace Reportz.Scripting.Commands
                 }
 
                 var methodResult = method.Invoke(instance, methodArgs);
-                
-                result = new ExecutableResult
-                {
-                    Result = methodResult,
-                };
+
+                result = args.CreateResult(methodResult);
                 return result;
             }
             catch (Exception ex)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using Reportz.Scripting;
 using Reportz.Scripting.Classes;
 using Reportz.Scripting.Interfaces;
 
@@ -65,10 +66,7 @@ namespace Reportz.Plugin.ProjectPlace
 
                 var csv = sb.ToString();
 
-                var result = new ExecutableResult
-                {
-                    Result = csv,
-                };
+                var result = args.CreateResult(csv);
                 return result;
             }
             catch (Exception ex)

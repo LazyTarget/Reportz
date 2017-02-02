@@ -28,10 +28,7 @@ namespace Reportz.Scripting.Commands
             var message = _instantiator.EvaluateExpression(args.Scope, _message);
             Console.WriteLine(message);
 
-            IExecutableResult result =new ExecutableResult
-            {
-                Result = message,
-            };
+            var result = args.CreateResult(message);
             return result;
         }
 

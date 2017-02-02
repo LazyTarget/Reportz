@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Reportz.Scripting;
 using Reportz.Scripting.Classes;
 using Reportz.Scripting.Interfaces;
 
@@ -66,10 +67,7 @@ namespace Reportz.Plugin.ProjectPlace
                 
                 var timeReports = GetTimeReports(client, startDate, endDate);
 
-                var result = new ExecutableResult
-                {
-                    Result = timeReports,
-                };
+                var result = args.CreateResult(timeReports);
                 return result;
             }
             catch (Exception ex)

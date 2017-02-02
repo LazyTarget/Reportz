@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ScriptingTests\ExpressionEvaluatorTests.cs" />
+    <Compile Include="ScriptingTests\ScriptParserTests.Variables.cs" />
     <Compile Include="ScriptingTests\ScriptParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
