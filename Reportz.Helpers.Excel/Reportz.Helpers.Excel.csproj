@@ -44,6 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\XlsxScriptElementAliasAttribute.cs" />
+    <Compile Include="Instructions\IXlsxInstruction.cs" />
+    <Compile Include="Instructions\XlsxInstructionBase.cs" />
+    <Compile Include="Instructions\CreateOrSelectWorksheetInstruction.cs" />
+    <Compile Include="XlsxInstructionsCollection.cs" />
+    <Compile Include="XlsxScriptParser.cs" />
     <Compile Include="XlsxUpdator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -56,6 +62,7 @@
       <Name>Reportz.Scripting</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)Reportz\$(OutDir)$(ProjectName).dll"

@@ -239,6 +239,21 @@
             <add key="loadFileName" value="Out/ExcelDoc_Template.xlsx" />
             <add key="saveFileName" value="Out/ExcelDoc_20170201.xlsx" />
             <!--<add key="saveFileName" value="Out/ExcelDoc_${$$now}.xlsx" eval="true" />-->
+            <add key="instructions">
+              
+              <instantiate>
+              <!--<instructions>-->
+                <type>Reportz.Helpers.Excel.XlsxInstructionsCollection, Reportz.Helpers.Excel</type>
+                
+                <create-or-select-worksheet>
+                  <properties>
+                    <add key="SheetName">Sheet1</add>
+                  </properties>
+                </create-or-select-worksheet>
+              <!--</instructions>-->
+              </instantiate>
+              
+            </add>
           </arguments>
           <events>
             <event key="error">
