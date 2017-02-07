@@ -9,9 +9,9 @@ using Reportz.Scripting.Interfaces;
 
 namespace Reportz.Helpers.Excel
 {
-    public class XlsxScriptParser : IScriptParser
+    public class XlsxScriptParser : ScriptParser
     {
-        private readonly IDictionary<string, Type> _knownAliases; 
+        private readonly IDictionary<string, Type> _knownAliases;
         private readonly IScriptParser _parser;
 
         public XlsxScriptParser(IScriptParser parser)
@@ -35,31 +35,35 @@ namespace Reportz.Helpers.Excel
         }
 
 
-        public IScriptDocument ParseDocument(string text)
+        public override IScriptDocument ParseDocument(string text)
         {
-            var res = _parser.ParseDocument(text);
+            //var res = _parser.ParseDocument(text);
+            var res = base.ParseDocument(text);
             return res;
         }
 
-        public object InstantiateElement(XElement element)
+        public override object InstantiateElement(XElement element)
         {
-            var res = _parser.InstantiateElement(element);
+            //var res = _parser.InstantiateElement(element);
+            var res = base.InstantiateElement(element);
             return res;
         }
 
-        public object EvaluateExpression(VariableScope scope, string expression)
+        public override object EvaluateExpression(VariableScope scope, string expression)
         {
-            var res = _parser.EvaluateExpression(scope, expression);
+            //var res = _parser.EvaluateExpression(scope, expression);
+            var res = base.EvaluateExpression(scope, expression);
             return res;
         }
 
-        public bool TryResolveType(string typeName, out Type type)
+        public override bool TryResolveType(string typeName, out Type type)
         {
-            var res = _parser.TryResolveType(typeName, out type);
+            //var res = _parser.TryResolveType(typeName, out type);
+            var res = base.TryResolveType(typeName, out type);
             return res;
         }
 
-        public bool TryResolveElementAlias(string elementName, out Type type)
+        public override bool TryResolveElementAlias(string elementName, out Type type)
         {
             var resolved = _knownAliases.TryGetValue(elementName, out type);
             if (resolved)

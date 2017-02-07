@@ -13,12 +13,7 @@ namespace Reportz.Scripting.Classes
     {
         private readonly Lux.Serialization.Xml.XmlSettings _xmlSettings = new Lux.Serialization.Xml.XmlSettings();
         //private readonly Lux.Interfaces.ITypeInstantiator _typeInstantiator = new Lux.TypeInstantiator();
-
-#if DEBUG
-        public readonly IDictionary<string, Type> _knownAliases;
-#else
         private readonly IDictionary<string, Type> _knownAliases;
-#endif
 
         private IScriptContext _scriptContext;
 
@@ -60,7 +55,7 @@ namespace Reportz.Scripting.Classes
         }
 
 
-        public IScriptDocument ParseDocument(string text)
+        public virtual IScriptDocument ParseDocument(string text)
         {
             try
             {
@@ -177,7 +172,7 @@ namespace Reportz.Scripting.Classes
                         //}
                     }
                 }
-                else if (_knownAliases.TryGetValue(elementName, out type))
+                else if (TryResolveElementAlias(elementName, out type))
                 {
                     if (type == null)
                         throw new Exception($"Type for element '{elementName}' not found");

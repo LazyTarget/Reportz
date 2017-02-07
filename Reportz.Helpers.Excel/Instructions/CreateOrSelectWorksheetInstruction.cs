@@ -23,15 +23,16 @@ namespace Reportz.Helpers.Excel.Instructions
 
         public override void Configure(IScriptParser parser, XElement element)
         {
-            
+            SheetName = element?.Attribute("sheetName")?.Value;
         }
 
         public override object Execute(ExcelPackage package, ExcelWorksheet worksheet, IExecutableArgs args)
         {
             ExcelWorksheet ws;
-            var sheetName = args?.Arguments?.FirstOrDefault(x => x.Key == "sheetName")?.Value?.ToString()
-                            ?? SheetName
-                            ?? "Sheet1";
+            var sheetName = SheetName;
+            if (string.IsNullOrWhiteSpace(sheetName))
+                throw new ArgumentException();
+
             if (package.Workbook.Worksheets.All(x => x.Name != sheetName))
                 ws = package.Workbook.Worksheets.Add(sheetName);
             else
