@@ -13,5 +13,7 @@ namespace Reportz.Scripting.Interfaces
         object EvaluateExpression(VariableScope scope, string expression);
 
         bool TryResolveType(string typeName, out Type type);
+
+        bool TryResolveElementAlias(string elementName, out Type type);
     }
 }

@@ -4,6 +4,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using OfficeOpenXml;
+using Reportz.Helpers.Excel.Instructions;
 using Reportz.Scripting;
 using Reportz.Scripting.Classes;
 using Reportz.Scripting.Interfaces;
@@ -40,6 +41,8 @@ namespace Reportz.Helpers.Excel
                                     ?? "Sheet1";
                     if (pkg.Workbook.Worksheets.All(x => x.Name != sheetName))
                         ws = pkg.Workbook.Worksheets.Add(sheetName);
+                    else
+                        ws = pkg.Workbook.Worksheets[sheetName];
                 }
 
 
@@ -54,14 +57,29 @@ namespace Reportz.Helpers.Excel
                     {
                         for (var x = 0; x < dataTable.Rows.Count; x++)
                         {
+                            // apply dataTable to Worksheet
+
                             var value = dataTable.Rows[x][y];
                             //ws.Cells[y, x].Value = value;
                             ws.SetValue(x + 1, y + 1, value);
                         }
                     }
                 }
+                
+                var instructions =
+                    args?.Arguments?.FirstOrDefault(x => x.Key == "instructions")?.Value as
+                        IEnumerable<IXlsxInstruction>;
+                if (instructions != null)
+                {
+                    foreach (var inst in instructions)
+                    {
+                        var r = inst.Execute(pkg, ws, args);
+                        if (r is ExcelWorksheet)
+                            ws = (ExcelWorksheet) r;
+                    }
+                }
 
-                // todo: apply dataSet to Worksheet
+
                 object res = pkg;
 
                 var result = args.CreateResult(res);
@@ -83,5 +101,6 @@ namespace Reportz.Helpers.Excel
                     pkg?.Save();
             }
         }
+
     }
 }

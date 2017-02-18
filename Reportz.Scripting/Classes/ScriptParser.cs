@@ -13,46 +13,35 @@ namespace Reportz.Scripting.Classes
     {
         private readonly Lux.Serialization.Xml.XmlSettings _xmlSettings = new Lux.Serialization.Xml.XmlSettings();
         //private readonly Lux.Interfaces.ITypeInstantiator _typeInstantiator = new Lux.TypeInstantiator();
-
-#if DEBUG
-        public readonly IDictionary<string, Type> _knownTypes;
-#else
-        private readonly IDictionary<string, Type> _knownTypes;
-#endif
+        private readonly IDictionary<string, Type> _knownAliases;
 
         private IScriptContext _scriptContext;
 
 
         public ScriptParser()
         {
+            AppDomain.CurrentDomain.AssemblyLoad += CurrentDomainOnAssemblyLoad;
+
             _xmlSettings = new Lux.Serialization.Xml.XmlSettings();
 
-            _knownTypes = new SortedDictionary<string, Type>();
+            _knownAliases = new SortedDictionary<string, Type>();
 
             // defaults
-            _knownTypes["script"] = typeof (Script);
-            _knownTypes["variable"] = typeof(Variable);
-            _knownTypes["event"] = typeof(Event);
-            _knownTypes["alert"] = typeof(AlertCommand);
-            _knownTypes["run-executable"] = typeof(RunExecutableCommand);
-            _knownTypes["invoke-method"] = typeof(InvokeMethodCommand);
-            _knownTypes["events"] = typeof(EventCollection);
-            _knownTypes["arguments"] = typeof(ArgCollection);
-            _knownTypes["list"] = typeof(ArgCollection);
+            _knownAliases["script"] = typeof (Script);
+            _knownAliases["variable"] = typeof(Variable);
+            _knownAliases["event"] = typeof(Event);
+            _knownAliases["alert"] = typeof(AlertCommand);
+            _knownAliases["run-executable"] = typeof(RunExecutableCommand);
+            _knownAliases["invoke-method"] = typeof(InvokeMethodCommand);
+            _knownAliases["events"] = typeof(EventCollection);
+            _knownAliases["arguments"] = typeof(ArgCollection);
+            _knownAliases["list"] = typeof(ArgCollection);
 
             // reflection
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(x => x.GetTypes())
-                .Where(x => typeof (IScriptElement).IsAssignableFrom(x) && x.IsClass)
-                .ToArray();
-            foreach (var type in types)
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (var assembly in assemblies)
             {
-                var scriptElementAttrs = type.GetCustomAttributes<ScriptElementAliasAttribute>(inherit: false).ToArray();
-                if (scriptElementAttrs.Any())
-                {
-                    foreach (var attr in scriptElementAttrs)
-                        _knownTypes[attr.Alias] = type;
-                }
+                LoadScriptElementAliases(assembly);
             }
 
             _scriptContext = new ScriptContext();
@@ -66,7 +55,7 @@ namespace Reportz.Scripting.Classes
         }
 
 
-        public IScriptDocument ParseDocument(string text)
+        public virtual IScriptDocument ParseDocument(string text)
         {
             try
             {
@@ -183,7 +172,7 @@ namespace Reportz.Scripting.Classes
                         //}
                     }
                 }
-                else if (_knownTypes.TryGetValue(elementName, out type))
+                else if (TryResolveElementAlias(elementName, out type))
                 {
                     if (type == null)
                         throw new Exception($"Type for element '{elementName}' not found");
@@ -291,7 +280,7 @@ namespace Reportz.Scripting.Classes
             var result = evaluator.EvaluateExpression(expression);
             return result;
         }
-        
+
 
         public virtual bool TryResolveType(string typeName, out Type type)
         {
@@ -312,5 +301,36 @@ namespace Reportz.Scripting.Classes
             var resolved = type != null;
             return resolved;
         }
+
+
+        public virtual bool TryResolveElementAlias(string elementName, out Type type)
+        {
+            var resolved = _knownAliases.TryGetValue(elementName, out type);
+            return resolved;
+        }
+
+
+        private void LoadScriptElementAliases(Assembly assembly)
+        {
+            var types = assembly
+                .GetTypes()
+                .Where(x => typeof (IScriptElement).IsAssignableFrom(x) && x.IsClass)
+                .ToArray();
+            foreach (var type in types)
+            {
+                var scriptElementAttrs = type.GetCustomAttributes<ScriptElementAliasAttribute>(inherit: false).ToArray();
+                if (scriptElementAttrs.Any())
+                {
+                    foreach (var attr in scriptElementAttrs)
+                        _knownAliases[attr.Alias] = type;
+                }
+            }
+        }
+        
+        private void CurrentDomainOnAssemblyLoad(object sender, AssemblyLoadEventArgs args)
+        {
+            LoadScriptElementAliases(args.LoadedAssembly);
+        }
+
     }
 }
