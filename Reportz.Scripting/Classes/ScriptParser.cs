@@ -11,8 +11,7 @@ namespace Reportz.Scripting.Classes
 {
     public class ScriptParser : IScriptParser
     {
-        private readonly Lux.Serialization.Xml.XmlSettings _xmlSettings = new Lux.Serialization.Xml.XmlSettings();
-        //private readonly Lux.Interfaces.ITypeInstantiator _typeInstantiator = new Lux.TypeInstantiator();
+        private readonly Lux.Serialization.Xml.XmlSettings _xmlSettings;
         private readonly IDictionary<string, Type> _knownAliases;
 
         private IScriptContext _scriptContext;
@@ -115,8 +114,11 @@ namespace Reportz.Scripting.Classes
                 Type type = null;
                 if (elementName == "instantiate")
                 {
-                    // todo: move 'instantiate' to Execute()...
-                    // todo: ...refactor as a Command?
+                    // refactored as a Command...
+                    var instantiateCmd = new InstantiateCommand();
+                    instantiateCmd.Configure(this, element);
+                    return instantiateCmd;
+
 
                     var instantiateElem = element;
                     elementType = instantiateElem?.Element("type")?.Value;

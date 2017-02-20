@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Reportz.Scripting.Attributes;
+using Reportz.Scripting.Commands;
 using Reportz.Scripting.Interfaces;
 
 namespace Reportz.Scripting.Classes
@@ -13,7 +14,8 @@ namespace Reportz.Scripting.Classes
     [ScriptElementAlias("variable")]
     public class Variable : IVariable, IExecutable, IScriptElement, ICloneable
     {
-        private IScriptParser _instantiator;
+        private InstantiateCommand _instantiate;
+        private IScriptParser _parser;
         private Type _explicitType;
         private bool? _instantiated;
         private XElement _element;
@@ -48,15 +50,25 @@ namespace Reportz.Scripting.Classes
             if (instantiateElem != null)
             {
                 // Instantiate value
-                if (_instantiator != null)
+                if (_instantiate != null)
                 {
-                    var value = _instantiator.InstantiateElement(instantiateElem);
+                    //var value = _parser.InstantiateElement(instantiateElem);
+                    //Value = value;
+                    //_instantiated = true;
+
+                    var a = new ExecutableArgs
+                    {
+                        Scope = args.Scope.CreateChild(),
+                        Arguments = new IVariable[] { new SimpleVariable("key", Key) },      // todo: remove?
+                    };
+                    var exeRes = _instantiate.Execute(a);
+                    var value = exeRes.Result;
                     Value = value;
                     _instantiated = true;
                 }
                 else
                 {
-                    throw new InvalidOperationException("Missing instantiator!");
+                    throw new InvalidOperationException("The 'InstantiateCommand' has not been configured!");
                 }
             }
             else if (_element?.Attribute("var") != null)
@@ -96,7 +108,7 @@ namespace Reportz.Scripting.Classes
 
                     if (eval.GetValueOrDefault())
                     {
-                        var val = _instantiator.EvaluateExpression(args.Scope, Value.ToString());
+                        var val = _parser.EvaluateExpression(args.Scope, Value.ToString());
                         Value = val;
                     }
                     else
@@ -136,7 +148,7 @@ namespace Reportz.Scripting.Classes
         public void Configure(IScriptParser parser, XElement element)
         {
             _element = element;
-            _instantiator = parser;
+            _parser = parser;
             
             Key = element.Attribute("key")?.Value;
             Value = element.Attribute("value")?.Value;
@@ -151,6 +163,9 @@ namespace Reportz.Scripting.Classes
                 if (instantiateElem != null)
                 {
                     // Instantiation is done in Execute(..)
+                    
+                    _instantiate = new InstantiateCommand();
+                    _instantiate.Configure(parser, instantiateElem);
                 }
                 else if (element.Attribute("value") == null && element.HasElements)
                 {
@@ -163,7 +178,7 @@ namespace Reportz.Scripting.Classes
             var typeName = element.Attribute("type")?.Value;
             if (!string.IsNullOrWhiteSpace(typeName))
             {
-                var typeResolved = _instantiator.TryResolveType(typeName, out _explicitType);
+                var typeResolved = _parser.TryResolveType(typeName, out _explicitType);
                 if (typeResolved && _explicitType != null)
                 {
                     var typeConverter = new Lux.Serialization.Xml.XmlSettings().Converter;
@@ -180,7 +195,7 @@ namespace Reportz.Scripting.Classes
 
             result._explicitType = _explicitType;
             result._element = _element;
-            result._instantiator = _instantiator;
+            result._parser = _parser;
             result._instantiated = _instantiated;
             return result;
         }
