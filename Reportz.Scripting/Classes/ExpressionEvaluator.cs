@@ -153,7 +153,7 @@ namespace Reportz.Scripting.Classes
                 }
             }
             str = string.Join(" ", words);
-            resultParts = words.Cast<object>().ToList();
+            //resultParts = words.Cast<object>().ToList();
 
 
             //IEnumerator<Expr> enumerator;

@@ -58,6 +58,7 @@ namespace Reportz.Scripting.Commands
                             Scope = args.Scope.CreateChild(),
                             Arguments = null,
                         };
+                        a.Scope = new ReadonlyVariableScope(a.Scope);
 
                         arguments = new List<object>();
                         foreach (var child in argsChildren)
@@ -81,6 +82,7 @@ namespace Reportz.Scripting.Commands
                         Scope = args.Scope.CreateChild(),
                         Arguments = null,
                     };
+                    a.Scope = new ReadonlyVariableScope(a.Scope);
 
                     properties = new List<Tuple<string, object>>();
                     var propChildren = propsElem.Elements();

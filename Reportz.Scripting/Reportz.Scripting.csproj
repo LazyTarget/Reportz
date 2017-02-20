@@ -67,6 +67,7 @@
     <Compile Include="Classes\ScriptParser.cs" />
     <Compile Include="Classes\LazyVariable.cs" />
     <Compile Include="Classes\Variable.cs" />
+    <Compile Include="Classes\ReadonlyVariableScope.cs" />
     <Compile Include="Classes\VariableScope.cs" />
     <Compile Include="Commands\AlertCommand.cs" />
     <Compile Include="Commands\InstantiateCommand.cs" />

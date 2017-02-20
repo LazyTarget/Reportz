@@ -29,21 +29,6 @@
 
     
     
-        <run-executable key="TimeReportExtractor">
-          <arguments>
-            <add key="startDate" var="startDate" type="DateTime" />
-            <add key="endDate" var="endDate" type="DateTime" />
-          </arguments>
-          <events>
-            <event key="error">
-              <alert>Something went wrong!! Error message: $$Exception.Message</alert>
-            </event>
-            <event key="complete">
-              <variable key="json" depth="root">$$Result</variable>
-            </event>
-          </events>
-        </run-executable>
-
         <invoke-method>
 			    <arguments>
             <add key="instance" var="DashAPI" />

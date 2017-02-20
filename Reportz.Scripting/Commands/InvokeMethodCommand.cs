@@ -111,13 +111,33 @@ namespace Reportz.Scripting.Commands
                     else
                     {
                         if (asStatic)
-                            bindingFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod;
+                            bindingFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod | BindingFlags.OptionalParamBinding;
                         else
-                            bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod;
+                            bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.OptionalParamBinding;
                     }
 
                     //method = type.GetMethod(methodName, bindingFlags);
                     method = type.GetMethod(methodName, bindingFlags, null, methodArgTypes, null);
+                    
+                    var methodParams = method.GetParameters().ToArray();
+                    if (methodParams.Any(x => x.IsOptional))
+                    {
+                        for (var i = 0; i < methodParams.Length; i++)
+                        {
+                            if (methodArgs.Length >= methodParams.Length)
+                                continue;
+                            var isAssigned = methodArgs.Length > i;
+                            if (isAssigned)
+                                continue;
+                            var param = methodParams[i];
+                            if (param.IsOptional)
+                            {
+                                var l = methodArgs.ToList();
+                                l.Insert(i, param.DefaultValue);
+                                methodArgs = l.ToArray();
+                            }
+                        }
+                    }
                 }
 
                 var methodResult = method.Invoke(instance, methodArgs);

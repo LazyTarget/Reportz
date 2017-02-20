@@ -2,8 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Reportz.Scripting.Interfaces;
 
 namespace Reportz.Scripting.Classes
@@ -17,9 +15,9 @@ namespace Reportz.Scripting.Classes
             _data = new ConcurrentDictionary<string, IVariable>();
         }
 
-        public VariableScope Parent { get; private set; }
+        public virtual VariableScope Parent { get; private set; }
 
-        public VariableScope Root
+        public virtual VariableScope Root
         {
             get
             {
@@ -33,7 +31,7 @@ namespace Reportz.Scripting.Classes
         }
 
 
-        public VariableScope CreateChild()
+        public virtual VariableScope CreateChild()
         {
             var child = new VariableScope
             {
@@ -42,7 +40,7 @@ namespace Reportz.Scripting.Classes
             return child;
         }
 
-        public IVariable GetVariable(string key)
+        public virtual IVariable GetVariable(string key)
         {
             var localOnly = false;
             //var localOnly = key.StartsWith("$$");
@@ -60,7 +58,7 @@ namespace Reportz.Scripting.Classes
             return result;
         }
 
-        public void SetVariable(IVariable variable)
+        public virtual void SetVariable(IVariable variable)
         {
             var v = GetVariable(variable.Key);
             if (v != null)
