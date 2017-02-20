@@ -68,6 +68,7 @@ namespace Reportz.Scripting.Classes
                 //v.Value = variable.Value;
 
                 var copy = (IVariable) v.Clone();
+                copy.Value = variable.Value;
                 _data[copy.Key] = copy;
             }
             else

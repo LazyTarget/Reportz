@@ -10,10 +10,13 @@
 	<execute>
     <alert>Text: $text</alert>
 
+    <using path="Reportz.Helpers.Common.dll" />
     <using path="Reportz.Helpers.Excel.dll" />
-    
+
+    <include path="In/Keys.repml" />
     <include path="In/Utils.repml" />
     <include path="In/ProjectPlace.repml" />
+    <include path="In/Dash.repml" />
     
     <execute-script name="AlertScript">
       <arguments>
@@ -33,9 +36,16 @@
     </execute-script>
     -->
 
-    <execute-script name="ProjectPlace">
+    <!--<execute-script name="ProjectPlace">
       <arguments>
         <add key="text">This is a parameter that has been passed to the 'ProjectPlace' script (from 'Main')</add>
+      </arguments>
+      <events></events>
+    </execute-script>-->
+
+    <execute-script name="Dash">
+      <arguments>
+        <add key="text">This is a parameter that has been passed to the 'Dash' script (from 'Main')</add>
       </arguments>
       <events></events>
     </execute-script>

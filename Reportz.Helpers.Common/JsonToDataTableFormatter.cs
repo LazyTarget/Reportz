@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using Newtonsoft.Json.Linq;
 using Reportz.Scripting;
-using Reportz.Scripting.Classes;
 using Reportz.Scripting.Interfaces;
 
-namespace Reportz.Plugin.ProjectPlace
+namespace Reportz.Helpers.Common
 {
     public class JsonToDataTableFormatter : IExecutable
     {

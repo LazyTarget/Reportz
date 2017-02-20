@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{E622
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reportz.Helpers.Excel", "Reportz.Helpers.Excel\Reportz.Helpers.Excel.csproj", "{82C71546-F7F0-450F-B539-ACFC6899B493}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reportz.Helpers.Common", "Reportz.Helpers.Common\Reportz.Helpers.Common.csproj", "{41D086A5-61D0-4993-8C66-B7FCEC080C7F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{82C71546-F7F0-450F-B539-ACFC6899B493}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82C71546-F7F0-450F-B539-ACFC6899B493}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82C71546-F7F0-450F-B539-ACFC6899B493}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41D086A5-61D0-4993-8C66-B7FCEC080C7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41D086A5-61D0-4993-8C66-B7FCEC080C7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41D086A5-61D0-4993-8C66-B7FCEC080C7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41D086A5-61D0-4993-8C66-B7FCEC080C7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,5 +68,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{4B69B7CE-D025-483C-AC76-0A6E66DFAFB0} = {F3F67F62-F24D-4943-A6B5-CDB85892DA44}
 		{82C71546-F7F0-450F-B539-ACFC6899B493} = {E6227AA0-B30B-4DFA-BC23-25251CC5C351}
+		{41D086A5-61D0-4993-8C66-B7FCEC080C7F} = {E6227AA0-B30B-4DFA-BC23-25251CC5C351}
 	EndGlobalSection
 EndGlobal

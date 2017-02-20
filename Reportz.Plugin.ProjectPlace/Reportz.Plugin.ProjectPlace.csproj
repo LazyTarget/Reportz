@@ -44,8 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="JsonToDataTableFormatter.cs" />
-    <Compile Include="TimeReportJsonToCsvFormatter.cs" />
     <Compile Include="TimeReportExtractor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

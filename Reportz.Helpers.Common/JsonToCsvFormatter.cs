@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Reportz.Scripting;
-using Reportz.Scripting.Classes;
 using Reportz.Scripting.Interfaces;
 
-namespace Reportz.Plugin.ProjectPlace
+namespace Reportz.Helpers.Common
 {
-    public class TimeReportJsonToCsvFormatter : IExecutable
+    public class JsonToCsvFormatter : IExecutable
     {
-        public TimeReportJsonToCsvFormatter()
+        public JsonToCsvFormatter()
         {
             
         }

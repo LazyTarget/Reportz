@@ -1,32 +1,24 @@
-﻿<document name="ProjectPlace">
+﻿<document name="Dash">
   <scripts>
     
-    <script name="ExtractTimeReportAsJson">
+    <script name="GetTripsAsJson">
       
       <!-- todo: define default arguments? -->
       <!--<arguments>
-        <add key="Username" var="username" type="string"></add>
-        <add key="Password" var="password" type="string"></add>
-        <add key="Url" var="url" type="string"></add>
+        <add key="AccessToken" var="AccessToken" type="string"></add>
       </arguments>-->
       
 	    <execute>
         <alert>Text: $text</alert>
         
-		    <variable key="TimeReportExtractor">
+		    <variable key="DashAPI">
 			    <instantiate>
-				    <type>Reportz.Plugin.ProjectPlace.TimeReportExtractor, Reportz.Plugin.ProjectPlace</type>
+				    <type>DashAPI.DashChassisAPI, DashAPI</type>
 				    <ctor>
 					    <arguments>
+                <add key="AccessToken" var="DashAPI_AccessToken" />
 					    </arguments>
 				    </ctor>
-				    <properties>
-					    <!--<add key="Username" var="username" type="string"></add>-->
-              <!--<add key="Password" var="password" type="string"></add>-->
-              <add key="Username" var="username" type="string">$username</add>
-              <add key="Password" var="password" type="string">$password</add>
-              <add key="Url" var="url" type="string">some url...</add>
-				    </properties>
 			    </instantiate>
 		    </variable>
     
@@ -52,15 +44,12 @@
           </events>
         </run-executable>
 
-        <!--
         <invoke-method>
 			    <arguments>
-            <add key="type" value="System.IO.File" />
-				    <add key="method">WriteAllText</add>
+            <add key="instance" var="DashAPI" />
+				    <add key="method">GetTrips</add>
             <add key="arguments">
               <arguments>
-                <add key="path" var="jsonFilePath" />
-                <add key="contents" var="json" />
               </arguments>
             </add>
 			    </arguments>
@@ -69,23 +58,34 @@
 					    <alert>Something went wrong!! Error message: $$Exception.Message</alert>
 				    </event>
 				    <event key="complete">
-					    <alert>Successfully wrote jsonDataFile at path: $path</alert>
+              <variable key="dashTrips" depth="root">$$Result</variable>
+              <alert>Successfully got trips data</alert>
 				    </event>
 			    </events>
 		    </invoke-method>
-        -->
 
-        <execute-script name="Utils.WriteAllText" scriptName="WriteAllText">
+        <invoke-method>
           <arguments>
-            <add key="path" var="jsonFilePath"></add>
-            <add key="contents" var="json"></add>
+            <add key="type" value="Newtonsoft.Json.JsonConvert, Newtonsoft.Json" />
+            <add key="method">SerializeObject</add>
+            <add key="arguments">
+              <arguments>
+                <add key="value" type="Object" var="dashTrips" />
+              </arguments>
+            </add>
           </arguments>
           <events>
+            <event key="error">
+              <alert>Something went wrong!! Error message: $$Exception.Message</alert>
+            </event>
             <event key="complete">
-              <alert>Successfully wrote jsonDataFile at path: $path</alert>
+              <variable key="dashTripsJson" depth="root">$$Result</variable>
+              <alert>Successfully serialized trips data</alert>
             </event>
           </events>
-        </execute-script>
+        </invoke-method>
+
+        <variable key="$$Result" var="dashTripsJson" />
 	    </execute>
   
 	    <events>
@@ -93,7 +93,7 @@
 			    <alert>Something went wrong when running script!! Error message: $$Exception.Message</alert>
 		    </event>
 		    <event key="completed">
-          <alert>Completed 'ExtractTimeReportAsJson'</alert>
+          <alert>Completed 'GetTripsAsJson'</alert>
         </event>
 	    </events>
     </script>
@@ -101,19 +101,13 @@
     
     
     
-    <script name="ProjectPlace">
+    <script name="Dash">
       <arguments></arguments>
       <!-- todo: define default arguments? -->
 
       <execute>
         <alert>Text: $text</alert>
         
-        <variable key="JsonToCsvFormatter">
-          <instantiate>
-            <type>Reportz.Helpers.Common.JsonToCsvFormatter, Reportz.Helpers.Common</type>
-          </instantiate>
-        </variable>
-
         <variable key="JsonToDataTableFormatter">
           <instantiate>
             <type>Reportz.Helpers.Common.JsonToDataTableFormatter, Reportz.Helpers.Common</type>
@@ -126,9 +120,9 @@
           </instantiate>
         </variable>
 
-        <variable key="startDate" type="DateTime">2017-01-01</variable>
-        <variable key="endDate" type="DateTime">2017-01-15</variable>
-        <variable key="jsonFilePath" type="string">Out/TimeReportJson_20170101-20170115.json</variable>
+        <!--<variable key="startDate" type="DateTime">2017-01-01</variable>-->
+        <!--<variable key="endDate" type="DateTime">2017-01-15</variable>-->
+        <variable key="jsonFilePath" type="string">Out/DashTrips_20170220.json</variable>
         <!--<variable key="jsonFilePath" type="string" eval="true">TimeReportJson_${$startDate}-${$endDate}</variable>-->
 
 
@@ -158,61 +152,60 @@
             </conditions>
             <execute>
               <alert>JsonDataFile exists</alert>
+              
+              <invoke-method>
+                <arguments>
+                  <add key="type" value="System.IO.File" />
+                  <add key="instance" value="$$null" /><!--Optional if static-->
+                  <add key="method">ReadAllText</add>
+                  <add key="arguments">
+                    <arguments>
+                      <add key="path" var="jsonFilePath" type="string" />
+                    </arguments>
+                  </add>
+                </arguments>
+                <events>
+                  <event key="error">
+                    <alert>Something went wrong!! Error message: $$Exception.Message</alert>
+                  </event>
+                  <event key="complete">
+                    <variable key="json" depth="root">$$Result</variable>
+                  </event>
+                </events>
+              </invoke-method>
             </execute>
           </if>
           <elseIf>
             <execute>
               <alert>JsonDataFile doesn't exist!</alert>
+              
+              <execute-script name="GetTripsAsJson">
+                <arguments>
+                  <add key="text">This is a parameter that has been passed to the 'GetTripsAsJson' script (from 'Dash')</add>
+                </arguments>
+                <events>
+                  <event key="complete">
+                    <variable key="json" depth="root">$$Result</variable>
+                  </event>
+                </events>
+              </execute-script>
+            
+              <execute-script name="Utils.WriteAllText" scriptName="WriteAllText">
+                <arguments>
+                  <add key="path" var="jsonFilePath"></add>
+                  <add key="contents" var="json"></add>
+                </arguments>
+                <events>
+                  <event key="complete">
+                    <alert>Successfully wrote jsonDataFile at path: $path</alert>
+                  </event>
+                </events>
+              </execute-script>
             </execute>
           </elseIf>
         </if-group>
 
-
-        <invoke-method>
-          <arguments>
-            <add key="type" value="System.IO.File" />
-            <add key="instance" value="$$null" /><!--Optional if static-->
-            <add key="method">ReadAllText</add>
-            <add key="arguments">
-              <arguments>
-                <add key="path" var="jsonFilePath" type="string" />
-              </arguments>
-            </add>
-          </arguments>
-          <events>
-            <event key="error">
-              <alert>Something went wrong!! Error message: $$Exception.Message</alert>
-            </event>
-            <event key="complete">
-              <variable key="json" depth="root">$$Result</variable>
-            </event>
-          </events>
-        </invoke-method>
-
         <alert>Json result: $json</alert>
-
-
-        <run-executable key="JsonToCsvFormatter">
-          <arguments>
-            <add key="json" var="json" />
-            <add key="seperator">;</add>
-            <list key="header">
-              <add>artifactTitle</add>
-              <add>reportedDate</add>
-              <add>minutes</add>
-              <add>meta.planletTitle</add>
-            </list>
-          </arguments>
-          <events>
-            <event key="error">
-              <alert>Something went wrong!! Error message: $$Exception.Message</alert>
-            </event>
-            <event key="complete">
-              <!--<variable key="csv" depth="root">$$Result</variable>-->
-              <variable key="csv" var="$$Result" depth="root" />
-            </event>
-          </events>
-        </run-executable>
 
         <run-executable key="JsonToDataTableFormatter">
           <arguments>
@@ -228,7 +221,6 @@
           </events>
         </run-executable>
 
-        <alert>Csv result: $csv</alert>
         <alert>DataTable result: $dataTable</alert>
 
 
@@ -237,7 +229,7 @@
             <add key="data" var="dataTable" />
             <add key="sheetName" value="Sheet1" />
             <add key="loadFileName" value="Out/ExcelDoc_Template.xlsx" />
-            <add key="saveFileName" value="Out/ExcelDoc_20170207.xlsx" />
+            <add key="saveFileName" value="Out/DashTrips_20170220.xlsx" />
             <!--<add key="saveFileName" value="Out/ExcelDoc_${$$now}.xlsx" eval="true" />-->
             <add key="instructions">
               
@@ -276,5 +268,7 @@
   </scripts>
 
   <execute>
+    <alert>Importing DashAPI...</alert>
+    <using path="DashAPI.dll" />
   </execute>
 </document>

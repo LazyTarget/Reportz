@@ -1,0 +1,11 @@
+﻿<document name="Keys">
+  <scripts>
+    
+  </scripts>
+  <execute>
+
+    <alert>Loaded 'Keys' script...</alert>
+    <variable key="DashAPI_AccessToken" depth="root" value="" />
+    
+  </execute>
+</document>

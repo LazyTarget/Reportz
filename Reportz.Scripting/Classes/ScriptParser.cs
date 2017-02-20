@@ -115,6 +115,9 @@ namespace Reportz.Scripting.Classes
                 Type type = null;
                 if (elementName == "instantiate")
                 {
+                    // todo: move 'instantiate' to Execute()...
+                    // todo: ...refactor as a Command?
+
                     var instantiateElem = element;
                     elementType = instantiateElem?.Element("type")?.Value;
                     if (string.IsNullOrEmpty(elementType))
@@ -133,8 +136,12 @@ namespace Reportz.Scripting.Classes
                             arguments = new List<object>();
                             foreach (var child in argsChildren)
                             {
-                                var arg = InstantiateElement(child);
-                                arguments.Add(arg);
+                                child.Name = "variable";        // todo: improve, use ArgCollection...
+
+                                var el = InstantiateElement(child);
+                                var variable = el as IVariable;
+                                var val = variable?.Value ?? el;
+                                arguments.Add(val);
                             }
                         }
                     }
@@ -149,10 +156,10 @@ namespace Reportz.Scripting.Classes
                             child.Name = "variable";        // todo: improve, use ArgCollection...
 
                             var el = InstantiateElement(child);
-                            var var = el as IVariable;
-                            var propVal = var?.Value ?? el;
+                            var variable = el as IVariable;
+                            var val = variable?.Value ?? el;
                             var key = child.Attribute("key")?.Value;
-                            var prop = new Tuple<string, object>(key, propVal);
+                            var prop = new Tuple<string, object>(key, val);
                             properties.Add(prop);
                         }
 

@@ -61,7 +61,16 @@ namespace Reportz.Scripting.Commands
                     }
                 }
 
-                result = args.CreateResult(loadedScriptDoc);
+                // Run ExecutionEnvironment
+                var a = new ExecutableArgs
+                {
+                    Scope = args.Scope.CreateChild(),
+                    Arguments = null,
+                };
+                var r = loadedScriptDoc.Execute(a);
+
+                object res = loadedScriptDoc;
+                result = args.CreateResult(res);
                 return result;
             }
             catch (Exception ex)
