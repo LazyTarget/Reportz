@@ -191,6 +191,7 @@
         <run-executable key="JsonToDataTableFormatter">
           <arguments>
             <add key="json" var="json" />
+            <add key="includeHeader" value="$$false" />
           </arguments>
           <events>
             <event key="error">

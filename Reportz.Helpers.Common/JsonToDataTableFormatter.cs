@@ -23,15 +23,21 @@ namespace Reportz.Helpers.Common
                 var jsonTkn = json is JToken
                     ? (JToken) json
                     : JToken.Parse(json?.ToString());
+                var includeHeaderTmp = args?.Arguments?.FirstOrDefault(x => x.Key == "includeHeader")?.Value?.ToString();
+                bool includeHeader;
+                bool.TryParse(includeHeaderTmp, out includeHeader);
                 
                 var dataTable = new DataTable();
                 ParseToken(jsonTkn, dataTable, null, null);
 
-                var headerRow = dataTable.NewRow();
-                dataTable.Rows.InsertAt(headerRow, 0);
-                foreach (DataColumn column in dataTable.Columns)
+                if (includeHeader)
                 {
-                    headerRow[column] = column.ColumnName;
+                    var headerRow = dataTable.NewRow();
+                    dataTable.Rows.InsertAt(headerRow, 0);
+                    foreach (DataColumn column in dataTable.Columns)
+                    {
+                        headerRow[column] = column.ColumnName;
+                    }
                 }
 
                 var result = args.CreateResult(dataTable);

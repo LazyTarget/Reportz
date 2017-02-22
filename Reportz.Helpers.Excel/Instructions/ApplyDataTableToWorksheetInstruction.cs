@@ -118,9 +118,4 @@ namespace Reportz.Helpers.Excel.Instructions
             return res;
         }
     }
-
-    public class ColumnMapping
-    {
-        
-    }
 }

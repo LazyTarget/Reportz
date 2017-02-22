@@ -42,42 +42,57 @@ namespace Reportz.Helpers.Excel.Mappings
             var targetElem = _element.Element("target");
             if (targetElem != null)
             {
+                bool includeHeader;
+                bool.TryParse(targetElem.Attribute("includeHeader")?.Value, out includeHeader);
+
                 var target = targetElem.Value;
                 var range = worksheet.Cells[target];
                 var colCount = range.Columns > 1 ? range.Columns : sources.Count;
-                var rowCount = range.Rows > 1 ? range.Rows : data.Rows.Count;
                 
                 for (var y = 0; y < colCount; y++)
                 {
+                    var headerIncluded = false;
                     var source = sources.ElementAtOrDefault(y);
                     var column = source != null ? data.Columns[source] : null;
+                    var rowCount = range.Rows > 1 ? range.Rows : data.Rows.Count;
+                    if (includeHeader)
+                        rowCount++;
 
                     for (var x = 0; x < rowCount; x++)
                     {
+                        var cell = range.Offset(x, y, 1, 1);
+                        var rowIndex = x;
+                        if (headerIncluded)
+                            rowIndex--;
+
+                        // Determine new value...
                         object value;
                         if (column == null)
                         {
+                            // No data to insert
                             value = null;
                         }
-                        else if (data.Rows.Count < x + 1)
+                        else if (includeHeader && !headerIncluded)
                         {
-                            // No data to insert...
-                            //continue;
-
-                            //insert blank?
+                            // Assign column name
+                            value = column.ColumnName;
+                            headerIncluded = true;
+                        }
+                        else if (data.Rows.Count <= rowIndex)
+                        {
+                            // Assign null (empty)
                             value = null;
                         }
                         else
                         {
-                            var row = data.Rows[x];
+                            var row = data.Rows[rowIndex];
                             value = row[column.Ordinal];
                         }
 
 
-                        var cell = range.Offset(x, y, 1, 1);
                         if (cell.Value != null)
                         {
-                            // Cell has a previous value...
+                            // Cell has a previous value
                             if (!Object.Equals(cell.Value, value))
                             {
                                 // Value will be updated...
@@ -85,7 +100,7 @@ namespace Reportz.Helpers.Excel.Mappings
                         }
                         else
                         {
-                            // Cell has NO previous value...
+                            // Cell has NO previous value
                             if (value != null)
                             {
                                 // Value will be inserted...
