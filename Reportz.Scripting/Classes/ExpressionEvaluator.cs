@@ -16,6 +16,8 @@ namespace Reportz.Scripting.Classes
             _systemKeys["$$empty"] = (key) => string.Empty;
             _systemKeys["$$now"] = (key) => DateTime.Now;
             _systemKeys["$$today"] = (key) => DateTime.Today;
+            _systemKeys["$$true"] = (key) => true;
+            _systemKeys["$$false"] = (key) => false;
         }
 
 
