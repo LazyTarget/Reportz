@@ -24,10 +24,6 @@
     
 		    <variable key="startDate" type="DateTime">2017-01-01</variable>
         <variable key="endDate" type="DateTime">2017-01-15</variable>
-        <variable key="jsonFilePath" type="string">Out/TimeReportJson_20170101-20170115.json</variable>
-        <!--<variable key="jsonFilePath" type="string" eval="true">TimeReportJson_${$startDate}-${$endDate}</variable>-->
-
-    
     
         <invoke-method>
 			    <arguments>
@@ -107,7 +103,7 @@
 
         <!--<variable key="startDate" type="DateTime">2017-01-01</variable>-->
         <!--<variable key="endDate" type="DateTime">2017-01-15</variable>-->
-        <variable key="jsonFilePath" type="string">Out/DashTrips_20170220.json</variable>
+        <variable key="jsonFilePath" type="string">Out/DashTrips_20170222.json</variable>
         <!--<variable key="jsonFilePath" type="string" eval="true">TimeReportJson_${$startDate}-${$endDate}</variable>-->
 
 
@@ -214,18 +210,32 @@
             <add key="data" var="dataTable" />
             <add key="sheetName" value="Sheet1" />
             <add key="loadFileName" value="Out/ExcelDoc_Template.xlsx" />
-            <add key="saveFileName" value="Out/DashTrips_20170220.xlsx" />
+            <add key="saveFileName" value="Out/DashTrips_20170222.xlsx" />
             <!--<add key="saveFileName" value="Out/ExcelDoc_${$$now}.xlsx" eval="true" />-->
             <add key="instructions">
-              
-              <!--<instantiate>
-                <type>Reportz.Helpers.Excel.XlsxInstructionsCollection, Reportz.Helpers.Excel</type>-->
               <instructions>
                 <create-or-select-worksheet sheetName="Sheet1" />
                 <create-or-select-worksheet sheetName="TestSheet1" />
+                <delete-worksheet sheetName="TestSheet1" />
+                
+                <datatable-to-worksheet>
+                  <data>$dataTable</data>
+                  <mappings>
+                    <col-map>
+                      <source>Id</source>
+                      <target includeHeader="true">A1:A50</target>
+                    </col-map>
+                    <col-map>
+                      <source>vehicleId</source>
+                      <target includeHeader="true">C1:D50</target>
+                    </col-map>
+                    <col-map>
+                      <source>dateStart,dateEnd</source>
+                      <target includeHeader="true">C1:D50</target>
+                    </col-map>
+                  </mappings>
+                </datatable-to-worksheet>
               </instructions>
-              <!--</instantiate>-->
-              
             </add>
           </arguments>
           <events>

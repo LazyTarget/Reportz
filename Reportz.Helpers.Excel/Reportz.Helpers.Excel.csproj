@@ -45,6 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\XlsxScriptElementAliasAttribute.cs" />
+    <Compile Include="Instructions\ApplyDataTableToWorksheetInstruction.cs" />
+    <Compile Include="Instructions\DeleteWorksheetInstruction.cs" />
     <Compile Include="Instructions\IXlsxInstruction.cs" />
     <Compile Include="Instructions\XlsxInstructionBase.cs" />
     <Compile Include="Instructions\CreateOrSelectWorksheetInstruction.cs" />
