@@ -199,5 +199,10 @@ namespace Reportz.Scripting.Classes
             result._instantiated = _instantiated;
             return result;
         }
+
+        public object GetValue()
+        {
+            return Value;
+        }
     }
 }

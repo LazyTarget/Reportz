@@ -59,5 +59,10 @@ namespace Reportz.Scripting.Classes
             var result = new SimpleVariable(Key, Value);
             return result;
         }
+
+        public object GetValue()
+        {
+            return Value;
+        }
     }
 }

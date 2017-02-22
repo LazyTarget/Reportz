@@ -77,5 +77,10 @@ namespace Reportz.Scripting.Classes
             var result = new LazyVariable(Key, _lazy);
             return result;
         }
+
+        public object GetValue()
+        {
+            return Value;
+        }
     }
 }

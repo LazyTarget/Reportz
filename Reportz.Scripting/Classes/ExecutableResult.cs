@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Reportz.Scripting.Interfaces;
 
 namespace Reportz.Scripting.Classes
@@ -19,6 +17,11 @@ namespace Reportz.Scripting.Classes
                 return Result?.ToString();
             return "[NULL]";
             //return base.ToString();
+        }
+
+        public object GetValue()
+        {
+            return Result;
         }
     }
 }

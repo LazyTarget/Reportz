@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Reportz.Scripting.Interfaces
+﻿namespace Reportz.Scripting.Interfaces
 {
-    public interface IExecutableResult
+    public interface IExecutableResult : IHasValue
     {
         IExecutableArgs Args { get; }
         object Result { get; }
