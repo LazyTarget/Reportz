@@ -209,7 +209,8 @@
           <arguments>
             <add key="data" var="dataTable" />
             <add key="sheetName" value="Sheet1" />
-            <add key="loadFileName" value="Out/ExcelDoc_Template.xlsx" />
+            <!--<add key="loadFileName" value="Out/ExcelDoc_Template.xlsx" />-->
+            <add key="loadFileName" value="Out/DashTrips_20170222.xlsx" />
             <add key="saveFileName" value="Out/DashTrips_20170222.xlsx" />
             <!--<add key="saveFileName" value="Out/ExcelDoc_${$$now}.xlsx" eval="true" />-->
             <add key="instructions">
@@ -223,15 +224,21 @@
                   <mappings>
                     <col-map>
                       <source>Id</source>
-                      <target includeHeader="true">A1:A50</target>
+                      <target includeHeader="true">A1</target>
                     </col-map>
                     <col-map>
                       <source>vehicleId</source>
-                      <target includeHeader="true">C1:D50</target>
+                      <target includeHeader="true">B1:B57</target>
                     </col-map>
                     <col-map>
-                      <source>dateStart,dateEnd</source>
-                      <target includeHeader="true">C1:D50</target>
+                      <sources>
+                        <source>dateStart</source>
+                        <source>dateEnd</source>
+                      </sources>
+                      <target includeHeader="true">C1:U70</target>
+                    </col-map>
+                    <col-map>
+                      <target includeHeader="true">G1</target>
                     </col-map>
                   </mappings>
                 </datatable-to-worksheet>

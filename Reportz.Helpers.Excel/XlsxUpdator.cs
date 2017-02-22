@@ -46,25 +46,26 @@ namespace Reportz.Helpers.Excel
                 }
 
 
-                var dt = args?.Arguments?.FirstOrDefault(x => x.Key == "data")?.Value;
-                dt = (dt as IExecutableResult)?.Result ?? dt;
-                var dataTable = dt is DataTable
-                    ? (DataTable) dt
-                    : null;
-                if (dataTable != null)
-                {
-                    for (var y = 0; y < dataTable.Columns.Count; y++)
-                    {
-                        for (var x = 0; x < dataTable.Rows.Count; x++)
-                        {
-                            // apply dataTable to Worksheet
+                //  Refactored to ApplyDataTableToWorksheetInstruction.cs
+                //var dt = args?.Arguments?.FirstOrDefault(x => x.Key == "data")?.Value;
+                //dt = (dt as IExecutableResult)?.Result ?? dt;
+                //var dataTable = dt is DataTable
+                //    ? (DataTable) dt
+                //    : null;
+                //if (dataTable != null)
+                //{
+                //    for (var y = 0; y < dataTable.Columns.Count; y++)
+                //    {
+                //        for (var x = 0; x < dataTable.Rows.Count; x++)
+                //        {
+                //            // apply dataTable to Worksheet
 
-                            var value = dataTable.Rows[x][y];
-                            //ws.Cells[y, x].Value = value;
-                            ws.SetValue(x + 1, y + 1, value);
-                        }
-                    }
-                }
+                //            var value = dataTable.Rows[x][y];
+                //            //ws.Cells[y, x].Value = value;
+                //            ws.SetValue(x + 1, y + 1, value);
+                //        }
+                //    }
+                //}
                 
                 var instructions =
                     args?.Arguments?.FirstOrDefault(x => x.Key == "instructions")?.Value as

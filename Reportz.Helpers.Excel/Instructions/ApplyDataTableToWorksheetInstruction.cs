@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using OfficeOpenXml;
 using Reportz.Helpers.Excel.Attributes;
+using Reportz.Helpers.Excel.Mappings;
 using Reportz.Scripting.Interfaces;
 
 namespace Reportz.Helpers.Excel.Instructions
@@ -33,6 +34,7 @@ namespace Reportz.Helpers.Excel.Instructions
             if (dataElem == null || dataElem.IsEmpty)
                 throw new InvalidOperationException();
 
+            // Get data
             object data;
             if (dataElem.HasElements)
             {
@@ -44,6 +46,11 @@ namespace Reportz.Helpers.Excel.Instructions
                 data = _parser.EvaluateExpression(args.Scope, dataElem.Value);
             }
 
+            var val = data as IHasValue;
+            if (val != null)
+                data = val.GetValue();
+
+            // Get data (backwards compatibility)
             var dataTable = data as DataTable;
             if (dataTable == null)
             {
@@ -59,13 +66,37 @@ namespace Reportz.Helpers.Excel.Instructions
             }
 
 
+            // Apply data
             ExcelWorksheet ws = worksheet;
             if (dataTable != null)
             {
-                var hasMaps = false;
+                // Get mappings
+                var mappings = new List<Mapping>();
+                var mappingsElem = _element.Element("mappings");
+                if (mappingsElem != null)
+                {
+                    foreach (var mapElem in mappingsElem.Elements())
+                    {
+                        var mappingObj = _parser.InstantiateElement(mapElem);
+                        var mapping = mappingObj as Mapping;
+                        if (mapping == null)
+                            continue;
+                        mappings.Add(mapping);
+                    }
+                }
+
+                var hasMaps = mappings.Any();
                 if (hasMaps)
                 {
-
+                    foreach (var mapping in mappings)
+                    {
+                        var colMap = mapping as DataTableColumnMapping;
+                        if (colMap != null)
+                        {
+                            colMap.Apply(dataTable, ws);
+                            continue;
+                        }
+                    }
                 }
                 else
                 {
@@ -86,5 +117,10 @@ namespace Reportz.Helpers.Excel.Instructions
             object res = null;
             return res;
         }
+    }
+
+    public class ColumnMapping
+    {
+        
     }
 }
