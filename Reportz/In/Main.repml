@@ -36,21 +36,21 @@
     </execute-script>
     -->
 
-    <!--<execute-script name="ProjectPlace">
+    <execute-script name="ProjectPlace">
       <arguments>
         <add key="text">This is a parameter that has been passed to the 'ProjectPlace' script (from 'Main')</add>
       </arguments>
       <events></events>
-    </execute-script>-->
+    </execute-script>
 
-    <execute-script name="Dash">
+    <!--<execute-script name="Dash">
       <arguments>
         <add key="text">This is a parameter that has been passed to the 'Dash' script (from 'Main')</add>
       </arguments>
       <events></events>
-    </execute-script>
-    
-	</execute>
+    </execute-script>-->
+
+  </execute>
   
 	<events></events>
 </document>

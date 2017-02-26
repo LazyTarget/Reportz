@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using OfficeOpenXml;
 using Reportz.Helpers.Excel.Attributes;
+using Reportz.Scripting.Classes;
 using Reportz.Scripting.Interfaces;
 
 namespace Reportz.Helpers.Excel.Mappings
@@ -23,21 +24,24 @@ namespace Reportz.Helpers.Excel.Mappings
             _element = element;
         }
 
-        public void Apply(DataTable data, ExcelWorksheet worksheet)
+        public void Apply(DataTable data, ExcelWorksheet worksheet, VariableScope scope)
         {
-            var sources = new List<string>();
-            var sourcesElem = _element.Element("sources") ?? _element;
-            foreach (var sourceElem in sourcesElem.Elements("source"))
+            var columns = new List<string>();
+            var valueElem = _element.Element("value");
+            if (valueElem == null)
             {
-                sources.Add(sourceElem.Value);
-            }
+                var sourcesElem = _element.Element("sources") ?? _element;
+                foreach (var sourceElem in sourcesElem.Elements("source"))
+                {
+                    columns.Add(sourceElem.Value);
+                }
 
-            if (!sources.Any())
-            {
-                // Add all columns from DataTable...
-                sources.AddRange(data.Columns.Cast<DataColumn>().Select(c => c.ColumnName));
+                if (!columns.Any())
+                {
+                    // Add all columns from DataTable...
+                    columns.AddRange(data.Columns.Cast<DataColumn>().Select(c => c.ColumnName));
+                }
             }
-
             
             var targetElem = _element.Element("target");
             if (targetElem != null)
@@ -47,13 +51,14 @@ namespace Reportz.Helpers.Excel.Mappings
 
                 var target = targetElem.Value;
                 var range = worksheet.Cells[target];
-                var colCount = range.Columns > 1 ? range.Columns : sources.Count;
+                var colCount = range.Columns > 1 ? range.Columns : columns.Count;
+                colCount = Math.Max(colCount, 1);
                 
                 for (var y = 0; y < colCount; y++)
                 {
                     var headerIncluded = false;
-                    var source = sources.ElementAtOrDefault(y);
-                    var column = source != null ? data.Columns[source] : null;
+                    var columnName = columns.ElementAtOrDefault(y);
+                    var column = columnName != null ? data.Columns[columnName] : null;
                     var rowCount = range.Rows > 1 ? range.Rows : data.Rows.Count;
                     if (includeHeader)
                         rowCount++;
@@ -65,11 +70,31 @@ namespace Reportz.Helpers.Excel.Mappings
                         if (headerIncluded)
                             rowIndex--;
 
+                        // Determine type...
+                        var type = column?.DataType;
+                        var typeName = _element.Attribute("type")?.Value;
+                        if (!string.IsNullOrEmpty(typeName))
+                        {
+                            if (!_parser.TryResolveType(typeName, out type))
+                                type = null;
+                        }
+
+
                         // Determine new value...
                         object value;
-                        if (column == null)
+                        if (valueElem != null)
+                        {
+                            var expr = valueElem.Value;
+                            value = _parser.EvaluateExpression(scope, expr);
+                        }
+                        else if (column == null)
                         {
                             // No data to insert
+                            value = null;
+                        }
+                        else if (data.Rows.Count <= rowIndex)
+                        {
+                            // Assign null (empty)
                             value = null;
                         }
                         else if (includeHeader && !headerIncluded)
@@ -78,18 +103,22 @@ namespace Reportz.Helpers.Excel.Mappings
                             value = column.ColumnName;
                             headerIncluded = true;
                         }
-                        else if (data.Rows.Count <= rowIndex)
-                        {
-                            // Assign null (empty)
-                            value = null;
-                        }
                         else
                         {
                             var row = data.Rows[rowIndex];
                             value = row[column.Ordinal];
                         }
 
-
+                        
+                        // Try convert type
+                        if (type != null)
+                        {
+                            var val = value;
+                            if (_parser.TryConvertType(type, val, out value))
+                                value = val;
+                        }
+                        
+                        // Compare with current value...
                         if (cell.Value != null)
                         {
                             // Cell has a previous value

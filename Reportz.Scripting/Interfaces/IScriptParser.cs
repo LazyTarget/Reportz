@@ -15,5 +15,7 @@ namespace Reportz.Scripting.Interfaces
         bool TryResolveType(string typeName, out Type type);
 
         bool TryResolveElementAlias(string elementName, out Type type);
+
+        bool TryConvertType(Type type, object value, out object result);
     }
 }

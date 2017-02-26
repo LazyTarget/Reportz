@@ -291,6 +291,23 @@ namespace Reportz.Scripting.Classes
         }
 
 
+        public bool TryConvertType(Type type, object value, out object result)
+        {
+            try
+            {
+                result = _xmlSettings.Converter.Convert(value, type);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                //throw;
+                //result = null;
+                result = value;
+                return false;
+            }
+        }
+
+
         public virtual bool TryResolveType(string typeName, out Type type)
         {
             type = null;

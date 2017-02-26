@@ -93,7 +93,7 @@ namespace Reportz.Helpers.Excel.Instructions
                         var colMap = mapping as DataTableColumnMapping;
                         if (colMap != null)
                         {
-                            colMap.Apply(dataTable, ws);
+                            colMap.Apply(dataTable, ws, args?.Scope);
                             continue;
                         }
                     }

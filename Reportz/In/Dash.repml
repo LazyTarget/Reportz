@@ -251,7 +251,7 @@
               <alert>Something went wrong!! Error message: $$Exception.Message</alert>
             </event>
             <event key="complete">
-              <variable key="dataTable" var="$$Result" depth="root" />
+              <variable key="xlsx" var="$$Result" depth="root" />
             </event>
           </events>
         </run-executable>

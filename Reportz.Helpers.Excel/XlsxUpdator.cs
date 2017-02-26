@@ -37,12 +37,17 @@ namespace Reportz.Helpers.Excel
                     pkg = new ExcelPackage(fileInfo);
 
 
-                    var sheetName = args?.Arguments?.FirstOrDefault(x => x.Key == "sheetName")?.Value?.ToString()
-                                    ?? "Sheet1";
-                    if (pkg.Workbook.Worksheets.All(x => x.Name != sheetName))
-                        ws = pkg.Workbook.Worksheets.Add(sheetName);
+                    var sheetName = args?.Arguments?.FirstOrDefault(x => x.Key == "sheetName")?.Value?.ToString();
+
+                    if (!string.IsNullOrEmpty(sheetName))
+                    {
+                        if (pkg.Workbook.Worksheets.All(x => x.Name != sheetName))
+                            ws = pkg.Workbook.Worksheets.Add(sheetName);
+                        else
+                            ws = pkg.Workbook.Worksheets[sheetName];
+                    }
                     else
-                        ws = pkg.Workbook.Worksheets[sheetName];
+                        ws = pkg.Workbook.Worksheets.FirstOrDefault();
                 }
 
 
